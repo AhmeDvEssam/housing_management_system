@@ -1,0 +1,443 @@
+﻿/* Custom Admin Fixes - v14 PRECISION TARGETING */
+/* Based on actual Jazzmin DOM inspection */
+
+/* ============================================
+   1. GLOBAL RTL & TEXT ALIGNMENT FIX
+   The root cause: Jazzmin uses .text-start on labels
+   which forces text-align: left. We must override it.
+   ============================================ */
+
+/* Override .text-start class which Jazzmin puts on ALL labels */
+.text-start {
+    text-align: right !important;
+}
+
+/* Force RTL direction on the entire page and hide scrollbar */
+html, body {
+    direction: rtl !important;
+    text-align: right !important;
+    overflow-x: hidden !important; /* Prevent text clipping on the right */
+    max-width: 100% !important;
+}
+
+/* Completely hide the vertical scrollbar as requested */
+::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+}
+* {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+/* ============================================
+   2. SECTION TITLES (card-header > card-title > strong)
+   Force to RIGHT side
+   ============================================ */
+.card-header {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+.card-title {
+    text-align: right !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* ============================================
+   3. FORM ROW LAYOUT FIX
+   Jazzmin uses: label.col-sm-3 + div.col-sm-9
+   or label.col-auto + div.col-auto.fieldBox
+   In RTL, the label (col-sm-3) should be on the RIGHT
+   ============================================ */
+
+/* Force the Bootstrap row inside form-group to be RTL */
+.form-group > .row {
+    direction: rtl !important;
+    flex-direction: row !important; /* Don't reverse, RTL handles it */
+}
+
+/* Labels should align text to right */
+.form-group label {
+    text-align: right !important;
+}
+
+/* col-sm-3 label: in RTL it naturally goes to the right */
+.form-group label.col-sm-3 {
+    text-align: right !important;
+}
+
+/* ============================================
+   4. RADIO BUTTONS - HORIZONTAL LAYOUT
+   Structure: div#id_person_type.inline-radios > div > label > input
+   The inner divs need to be inline/horizontal
+   ============================================ */
+#id_person_type {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 10px !important;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+#id_person_type > div {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#id_person_type > div > label {
+    display: flex !important;
+    flex-direction: row-reverse !important; /* Text first, then radio in RTL */
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 16px !important;
+    background: white !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+#id_person_type > div > label:hover {
+    border-color: #3b82f6 !important;
+    background: #eff6ff !important;
+}
+
+#id_person_type input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    accent-color: #3b82f6 !important;
+}
+
+/* Highlight selected radio */
+#id_person_type input[type="radio"]:checked + span,
+#id_person_type > div:has(input:checked) > label {
+    background: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* ============================================
+   5. FIELD INPUTS - CONSISTENT SIZING
+   ============================================ */
+.form-group input.vTextField,
+.form-group input.form-control,
+.form-group select,
+.form-group textarea {
+    text-align: right !important;
+    direction: rtl !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 8px 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    outline: none !important;
+}
+
+/* ============================================
+   6. DATE FIELDS - NATIVE CALENDAR + FREE TYPING
+   Convert to type=date via JS, but also allow text
+   ============================================ */
+
+/* Style date inputs */
+.field-start_date input,
+.field-end_date input,
+.field-payment_deadline input {
+    text-align: right !important;
+    min-width: 160px !important;
+}
+
+/* ============================================
+   7. SIDEBAR BUTTONS - COMPACT & LEFT EDGE
+   Structure: div.col-12.col-lg-3 > div#jazzy-actions
+   ============================================ */
+.col-12.col-lg-3 {
+    flex: 0 0 140px !important;
+    max-width: 140px !important;
+    padding: 5px !important;
+}
+
+#jazzy-actions {
+    position: sticky !important;
+    top: 80px !important;
+}
+
+#jazzy-actions input[type="submit"] {
+    width: 100% !important;
+    margin-bottom: 5px !important;
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+#jazzy-actions input[type="submit"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+}
+
+/* Main content area - adjust to give filters more space */
+#changelist-form {
+    flex: 1 !important;
+    width: 100% !important;
+}
+
+/* Fix filters sidebar width in changelist */
+#changelist-filter {
+    width: 320px !important;
+    max-width: 320px !important;
+    flex: 0 0 320px !important;
+}
+
+/* If Jazzmin wraps changelist-filter in a col class, reset it */
+div:has(> #changelist-filter),
+.changelist-layout .col-12.col-lg-3,
+.changelist-layout .col-12.col-md-3,
+.col-12.col-lg-2:has(#changelist-filter),
+.col-12.col-lg-3:has(#changelist-filter) {
+    flex: 0 0 320px !important;
+    max-width: 320px !important;
+}
+
+/* Ensure filter options have enough space */
+#changelist-filter ul li {
+    white-space: normal !important;
+    word-break: break-word;
+    margin-bottom: 8px !important;
+}
+
+/* Make filter titles bigger and readable */
+#changelist-filter h3 {
+    font-size: 15px !important;
+    font-weight: bold !important;
+    margin-bottom: 5px !important;
+    color: #1e293b !important;
+}
+
+/* Enlarge filter select dropdowns if any */
+#changelist-filter select {
+    width: 100% !important;
+    padding: 8px !important;
+    font-size: 14px !important;
+}
+
+/* ============================================
+   8. MULTI-FIELD ROW - Remove gaps, fill width
+   For rows like (guest_id_no, guest_name, guest_rank)
+   Label and input alternate: label, input, label, input...
+   ============================================ */
+.form-group .row {
+    align-items: center !important;
+}
+
+.form-group .col-auto.fieldBox {
+    flex: 1 !important;
+}
+
+/* Make Name field wider */
+.form-group .col-auto.fieldBox.field-guest_name {
+    flex: 2.5 !important;
+}
+
+.form-group .col-auto.fieldBox input,
+.form-group .col-auto.fieldBox select {
+    width: 100% !important;
+}
+
+/* ============================================
+   9. CLASSIFICATION & PRICE HIGHLIGHT
+   ============================================ */
+.fieldBox.field-classification input {
+    background: #fffbeb !important;
+    border: 2px solid #fbbf24 !important;
+    color: #92400e !important;
+    font-weight: 700 !important;
+}
+
+.fieldBox.field-total_price input {
+    background: #f0fdf4 !important;
+    border: 2px solid #10b981 !important;
+    color: #065f46 !important;
+    font-weight: 800 !important;
+    font-size: 16px !important;
+}
+
+/* ============================================
+   10. FIELDSET/CARD STYLING
+   ============================================ */
+.card {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+    background: #f1f5f9 !important;
+    border-bottom: 2px solid #3b82f6 !important;
+    padding: 12px 20px !important;
+}
+
+.card-title strong {
+    color: #1e293b !important;
+    font-size: 15px !important;
+}
+
+/* ============================================
+   11. PERIOD ROW FIX - All 3 fields on ONE line
+   Structure: .field-period.field-start_date.field-end_date > .row
+   Problem: col-sm-3 label takes 25% width, pushes end_date down
+   ============================================ */
+
+/* Shrink the first label in period row from 25% to auto */
+.field-period.field-start_date.field-end_date > .row > label.col-sm-3 {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    padding-left: 10px !important;
+    white-space: nowrap !important;
+}
+
+/* Force the period row to stay on ONE LINE */
+.field-period.field-start_date.field-end_date > .row {
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* Make each fieldBox in period row compact */
+.field-period.field-start_date.field-end_date .col-auto.fieldBox {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+}
+
+/* Labels inside period row - compact */
+.field-period.field-start_date.field-end_date .col-auto.text-start {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    padding: 0 5px !important;
+}
+
+/* ============================================
+   12. DATE INPUT - CALENDAR ICON ON LEFT SIDE
+   For type="date" inputs, flip the icon to LEFT
+   ============================================ */
+input[type="date"] {
+    direction: ltr !important; /* Forces calendar icon to the LEFT */
+    text-align: left !important;
+    position: relative !important;
+    min-width: 150px !important;
+    padding: 8px 12px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+/* Calendar icon hover & interaction effects */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer !important;
+    padding: 4px !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
+    filter: invert(0.4) sepia(1) saturate(5) hue-rotate(190deg) !important; /* Blue tint */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: #eff6ff !important;
+    filter: invert(0.3) sepia(1) saturate(10) hue-rotate(190deg) !important; /* Brighter blue */
+    transform: scale(1.3) !important;
+}
+
+input[type="date"]:hover {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+input[type="date"]:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+    outline: none !important;
+}
+
+/* ============================================
+   13. PAYMENT DEADLINE DATE - Same treatment
+   ============================================ */
+.field-payment_deadline input[type="date"] {
+    direction: ltr !important;
+    text-align: left !important;
+}
+
+/* ============================================
+   14. USER PROFILE DROPDOWN FIX
+   Make sure the dropdown appears below the icon properly
+   ============================================ */
+
+.main-header .navbar-nav.ml-auto .nav-item.dropdown {
+    position: relative !important;
+}
+
+.main-header .navbar-nav.ml-auto .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 10000 !important;
+    min-width: 240px !important;
+}
+
+.main-header .navbar-nav.ml-auto .nav-item.dropdown.show .dropdown-menu,
+.main-header .navbar-nav.ml-auto .dropdown-menu.show {
+    display: block !important;
+}
+
+.main-header .navbar-nav.ml-auto .dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* Print: hide back button */
+@media print {
+    #global-back-btn, #forced-back-btn, #custom-user-dropdown-built {
+        display: none !important;
+    }
+}
+/* Select2 Dropdown Fixes */
+.select2-container .select2-dropdown {
+    z-index: 999999 !important;
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+}
+.select2-container .select2-results__option {
+    color: #333 !important;
+    background: transparent !important;
+    padding: 8px !important;
+}
+.select2-container .select2-results__option--highlighted {
+    background: #3b82f6 !important;
+    color: #fff !important;
+}
+.select2-search__field {
+    color: #333 !important;
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    padding: 5px !important;
+    width: 100% !important;
+}

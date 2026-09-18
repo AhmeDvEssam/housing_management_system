@@ -1,0 +1,449 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <title>تمام يومي للخلوات - {{ selected_club.name|default:"النادي" }}</title>
+    <link rel="stylesheet" href="{% static 'css/cairo.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <style>
+        :root {
+            --brand: #0f172a;
+            --primary: #0ea5e9;
+            --bg: #f8fafc;
+            --available: #10b981;
+            --occupied: #f43f5e;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: var(--bg);
+            color: var(--brand);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        /* Branding Header */
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--brand);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .report-header .logo-side {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .report-header .logo-side img { height: 70px; }
+        .report-header .title-side { text-align: left; }
+        .report-header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--brand); }
+        .report-header p { margin: 5px 0 0; color: var(--primary); font-weight: 700; font-size: 14px; }
+
+        .info-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: #f1f5f9;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* Building Sections */
+        .building-box {
+            margin-bottom: 40px;
+            break-inside: avoid;
+        }
+
+        .building-header {
+            background: var(--brand);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .building-header h2 { margin: 0; font-size: 18px; font-weight: 700; }
+
+        /* Grid */
+        .status-grid {
+            display: flex;
+            gap: 40px;
+            position: relative;
+        }
+
+        /* Elegant separator line */
+        .status-grid::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(to bottom, rgba(226,232,240,0.1), rgba(15,23,42,0.2), rgba(226,232,240,0.1));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .status-col { 
+            flex: 1; 
+            min-height: 50px; 
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .status-col.avail {
+            background: linear-gradient(to bottom, #f0fdf4, #ffffff);
+            border: 1px solid #bbf7d0;
+            box-shadow: inset 0 2px 4px 0 rgba(16, 185, 129, 0.05);
+        }
+        .status-col.occ {
+            background: linear-gradient(to bottom, #fef2f2, #ffffff);
+            border: 1px solid #fecaca;
+            box-shadow: inset 0 2px 4px 0 rgba(244, 63, 94, 0.05);
+        }
+
+        .status-col h3 {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-col.avail h3 { color: var(--available); border-bottom-color: #bbf7d0; }
+        .status-col.occ h3 { color: var(--occupied); border-bottom-color: #fecaca; }
+
+        .unit-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .unit-card {
+            background: #fff;
+            border: 2px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .status-col.avail .unit-card {
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+        .status-col.avail .unit-card:hover { 
+            border-color: var(--available); 
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.2);
+            background-color: #f0fdf4;
+        }
+
+        .status-col.occ .unit-card {
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .status-col.occ .unit-card:hover { 
+            border-color: var(--occupied); 
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px -2px rgba(244, 63, 94, 0.2);
+            background-color: #fef2f2;
+        }
+
+        .unit-card small { font-size: 11px; font-weight: 700; margin-top: 4px; opacity: 0.8; }
+        
+        .status-col.avail .classification-badge { background-color: var(--available); color: #fff; }
+        .status-col.occ .classification-badge { background-color: var(--occupied); color: #fff; }
+
+        .classification-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            margin-top: 6px;
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        /* Controls */
+        .no-print {
+            margin-bottom: 30px;
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+        select, input {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        @media print {
+            @page { size: A4; margin: 15mm; }
+            body { padding: 0; background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .no-print { display: none !important; }
+            
+            /* Black and White, smaller boxes */
+            .building-box { 
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-bottom: 20px;
+                border: 2px solid #000;
+                padding: 10px;
+                border-radius: 8px;
+            }
+            .building-header {
+                background: #e2e8f0 !important;
+                color: #000 !important;
+                padding: 8px 15px;
+                margin-bottom: 10px;
+                border: 1px solid #000;
+            }
+            .building-header h2 { font-size: 16px; }
+            
+            .status-grid { gap: 15px; }
+            .status-grid::before { display: none; } /* Hide center line on print */
+            
+            .status-col {
+                padding: 10px;
+                background: #fff !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                border-radius: 8px;
+                min-height: auto;
+            }
+            .status-col h3 {
+                font-size: 13px;
+                color: #000 !important;
+                border-bottom: 2px solid #000 !important;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+            
+            .unit-list { gap: 6px; }
+            .unit-card {
+                padding: 5px 8px;
+                font-size: 12px;
+                min-width: 60px;
+                border: 1px solid #000 !important;
+                background: #fff !important;
+                color: #000 !important;
+                box-shadow: none !important;
+            }
+            .unit-card small { font-size: 10px; color: #000 !important; }
+            .classification-badge {
+                background: #000 !important;
+                color: #fff !important;
+                font-size: 9px;
+                padding: 2px 6px;
+                border: 1px solid #000;
+            }
+            
+            .info-bar {
+                background: #fff !important;
+                border: 2px solid #000;
+                padding: 10px 15px;
+                margin-bottom: 20px;
+                color: #000;
+            }
+            .report-header .title-side div { color: #000 !important; }
+            .report-header p { color: #000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="/admin/" class="btn no-print" style="position: absolute; top: 15px; left: 15px; background: #dc3545; color: white !important; z-index: 1000;"><i class="fas fa-arrow-right"></i> رجوع</a>
+
+<div class="no-print">
+    <form method="GET" style="display: flex; gap: 16px; align-items: flex-end;">
+        <select name="club" required>
+            <option value="">اختر النادي</option>
+            {% for club in clubs %}
+            <option value="{{ club.id }}" {% if selected_club.id == club.id %}selected{% endif %}>{{ club.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="period" id="periodFilter" onchange="periodChanged()">
+            <option value="">-- اختر الأسبوع/الفوج --</option>
+            {% for p in periods %}
+            <option value="{{ p.id }}" {% if request.GET.period == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="from" id="fromDate" value="{{ date_from }}" placeholder="من: DD-MM-YYYY">
+        <input type="text" name="to" id="toDate" value="{{ date_to }}" placeholder="إلى: DD-MM-YYYY">
+        <button type="submit" class="btn"><i class="fas fa-sync"></i> تحديث</button>
+        <button type="button" class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+    </form>
+</div>
+
+<div class="container">
+    <div class="report-header" style="flex-direction: column; align-items: stretch; border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--brand); padding-bottom: 24px; margin-bottom: 15px;">
+            <div class="logo-side">
+                <img src="{% static 'img/logo_premium.png' %}" alt="Logo">
+                <div>
+                    <h1>تمام يومي للخلوات</h1>
+                    <p>المجمع الخدمي لنوادي وفنادق 6 اكتوبر</p>
+                </div>
+            </div>
+            <div class="title-side">
+                <div style="font-weight: 800; font-size: 18px;">الموقف اليومي</div>
+                <div style="color: var(--primary); font-weight: 700;">{{ date_from }} / {{ date_to }}</div>
+            </div>
+        </div>
+        <div class="no-print" style="display: flex; justify-content: flex-end; padding: 0; box-shadow: none; margin-bottom: 20px; background: transparent;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 14px;">
+                <input type="checkbox" id="showAllToggle" onchange="toggleAllocations()"> إظهار جميع المخصصات والمشغول
+            </label>
+        </div>
+    </div>
+
+    {% if selected_club %}
+    <div class="info-bar">
+        <span><i class="fas fa-hotel"></i> النادي: {{ selected_club.name }}</span>
+        <span><i class="fas fa-map-marker-alt"></i> الموقع: {{ selected_club.city|default:"--" }}</span>
+        <span style="text-align: left;"><i class="fas fa-calendar-day"></i> التواريخ: {{ date_from }} - {{ date_to }}</span>
+    </div>
+
+    {% for b_data in buildings_data %}
+    <div class="building-box">
+        <div class="building-header">
+            <h2><i class="fas fa-building"></i> {{ b_data.building.name }}</h2>
+            <span>متاح: {{ b_data.available_units|length }} وحدة</span>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-col avail">
+                <h3><i class="fas fa-check-circle"></i> الوحدات المتاحة</h3>
+                <div class="unit-list">
+                    {% for u in b_data.available_units %}
+                    <div class="unit-card">
+                        {{ u.unit_no }}
+                        <small>{{ u.type }}</small>
+                        {% if u.classification %}
+                        <span class="classification-badge">{{ u.classification }}</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <span style="color: #94a3b8; font-size: 13px;">لا يوجد شقق متاحة حالياً</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="status-col occ">
+                <h3><i class="fas fa-times-circle"></i> <span class="allocated-header-title">المخصصات</span></h3>
+                <div class="unit-list">
+                    {% for u in b_data.allocated_units %}
+                    <div class="unit-card {% if not u.is_commander %}other-alloc{% endif %}" style="{% if not u.is_commander %}display: none;{% endif %}">
+                        {{ u.unit_no }}
+                        <small>{{ u.allocation_info|default:"مشغول" }}</small>
+                        {% if u.classification %}
+                        <span class="classification-badge">{{ u.classification }}</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <span style="color: #94a3b8; font-size: 13px;">لا يوجد إشغالات</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <div style="margin-top: 60px; border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between;">
+        <div style="text-align: center; width: 200px;">
+            <p style="font-weight: 800;">مسؤول الحجز</p>
+            <p style="margin-top: 30px;">............................</p>
+        </div>
+        <div style="text-align: center; width: 200px;">
+            <p style="font-weight: 800;">مدير النادي</p>
+            <p style="margin-top: 30px;">............................</p>
+        </div>
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: 100px; color: #94a3b8;">
+        <i class="fas fa-search" style="font-size: 50px; margin-bottom: 20px;"></i>
+        <p>يرجى اختيار النادي للمتابعة</p>
+    </div>
+    {% endif %}
+</div>
+
+    <script>
+        function toggleAllocations() {
+            const showAll = document.getElementById('showAllToggle').checked;
+            const items = document.querySelectorAll('.other-alloc');
+            items.forEach(el => {
+                el.style.display = showAll ? 'flex' : 'none';
+            });
+            const headers = document.querySelectorAll('.allocated-header-title');
+            headers.forEach(el => {
+                el.textContent = showAll ? 'المخصصات / المشغول' : 'المخصصات';
+            });
+        }
+        function periodChanged() {
+            const periodId = document.getElementById('periodFilter').value;
+            if(periodId) {
+                document.getElementById('fromDate').value = '';
+                document.getElementById('toDate').value = '';
+            }
+        }
+    </script>
+</body>
+</html>

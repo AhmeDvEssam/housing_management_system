@@ -1,0 +1,152 @@
+{% extends "admin/login.html" %}
+{% load static %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    @import url('{% static 'css/cairo.css' %}');
+
+    :root {
+        --glass: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --brand-blue: #0ea5e9;
+        --brand-cyan: #22d3ee;
+    }
+
+    body.login {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+        background-attachment: fixed !important;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Cairo', sans-serif !important;
+        height: 100vh;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+    }
+
+    #login-box {
+        background: var(--glass) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid var(--glass-border) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        padding: 40px !important;
+        width: 100% !important;
+        max-width: 420px !important;
+        margin: auto !important; /* Force center */
+        z-index: 10;
+        position: relative;
+    }
+
+    .login-logo {
+        margin-bottom: 20px !important;
+        text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .login-logo img {
+        max-height: 100px !important;
+        width: auto !important;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)) !important;
+    }
+
+    .login-box-msg {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        font-size: 22px !important;
+        margin-bottom: 30px !important;
+        text-align: center !important;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid rgba(0,0,0,0.05) !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        height: auto !important;
+        color: #1e293b !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .form-control:focus {
+        background: #fff !important;
+        border-color: var(--brand-blue) !important;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1) !important;
+    }
+
+    .input-group-text {
+        background: transparent !important;
+        border: none !important;
+        color: #64748b !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, #0284c7, #0ea5e9) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 14px !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        text-transform: none !important;
+        box-shadow: 0 10px 15px -3px rgba(2, 132, 199, 0.3) !important;
+        transition: all 0.3s ease !important;
+        margin-top: 10px !important;
+        width: 100% !important;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 20px 25px -5px rgba(2, 132, 199, 0.4) !important;
+        opacity: 0.9 !important;
+    }
+
+    /* RTL specific tweaks */
+    [dir="rtl"] .input-group-append {
+        margin-left: 0;
+        margin-right: -1px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="login-box">
+    <div class="login-logo">
+        <a href="/">
+            <img src="{% static 'img/logo_premium.png' %}" alt="Logo">
+        </a>
+    </div>
+    <div class="card-body login-card-body">
+        <p class="login-box-msg">تسجيل الدخول للمنظومة</p>
+
+        <form action="{{ app_path }}" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-4">
+                <input type="text" name="username" class="form-control" placeholder="اسم المستخدم" required>
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-user"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-4">
+                <input type="password" name="password" class="form-control" placeholder="كلمة المرور" required>
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-block">دخول الآمن</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block search %}
+    {{ block.super }}
+    <div id="custom-filters-container" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">الفوج / الأسبوع:</label>
+            <select name="period_custom" id="custom_period_filter" onchange="autoFillDates()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 180px; background: #f8fafc;">
+                <option value="" data-start="" data-end="">-- الكل --</option>
+                {% for p in periods %}
+                    <option value="{{ p.id }}" data-start="{{ p.start_date|date:'Y-m-d' }}" data-end="{{ p.end_date|date:'Y-m-d' }}" {% if selected_period == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }} ({{ p.start_date|date:"Y-m-d" }} إلى {{ p.end_date|date:"Y-m-d" }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">من تاريخ:</label>
+            <input type="date" name="from_date" id="custom_from_date" value="{{ selected_from }}" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">إلى تاريخ:</label>
+            <input type="date" name="to_date" id="custom_to_date" value="{{ selected_to }}" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var searchForm = document.getElementById("changelist-search");
+            var customFilters = document.getElementById("custom-filters-container");
+            if (searchForm && customFilters) {
+                // Move custom filters inside the search form, just after the search box
+                searchForm.appendChild(customFilters);
+                customFilters.style.background = "transparent";
+                customFilters.style.border = "none";
+                customFilters.style.padding = "0";
+                customFilters.style.margin = "10px 0 0 0";
+            }
+        });
+
+        function autoFillDates() {
+            const select = document.getElementById('custom_period_filter');
+            const selectedOption = select.options[select.selectedIndex];
+            const startDate = selectedOption.getAttribute('data-start');
+            const endDate = selectedOption.getAttribute('data-end');
+            
+            document.getElementById('custom_from_date').value = startDate || '';
+            document.getElementById('custom_to_date').value = endDate || '';
+        }
+
+        // Clean up the ugly action counter text
+        document.addEventListener("DOMContentLoaded", function() {
+            var actionCounter = document.querySelector('.action-counter');
+            if (actionCounter) {
+                var totalCount = actionCounter.getAttribute('data-actions-icnt');
+                
+                // Hide original action counter so Django's actions.js doesn't mess with our text
+                actionCounter.style.display = 'none';
+                
+                // Hide the extra spans that show ugly text
+                var extraSpans = document.querySelectorAll('.action-counter ~ span.all, .action-counter ~ span.question, .action-counter ~ span.clear');
+                extraSpans.forEach(function(span) {
+                    span.style.display = 'none';
+                });
+                
+                // Create a clean, static total count span
+                if (totalCount) {
+                    var customCounter = document.createElement('span');
+                    customCounter.style.fontWeight = 'bold';
+                    customCounter.style.color = '#475569';
+                    customCounter.style.fontSize = '14px';
+                    customCounter.style.marginLeft = '15px';
+                    customCounter.innerHTML = 'إجمالي عدد الحجوزات للفترة المحددة: <span style="color:#e74c3c; font-size:16px;">{{ cl.result_count }}</span> حجز (الصفحة الحالية تعرض: ' + totalCount + ')';
+                    actionCounter.parentNode.insertBefore(customCounter, actionCounter);
+                }
+            }
+        });
+    </script>
+{% endblock %}

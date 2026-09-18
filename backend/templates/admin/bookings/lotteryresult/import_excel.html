@@ -1,0 +1,229 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n admin_urls static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+<style>
+    .import-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        padding: 35px;
+        font-family: 'Cairo', sans-serif;
+    }
+    .import-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .import-header i {
+        font-size: 48px;
+        color: #10b981;
+        background: #ecfdf5;
+        padding: 20px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+    }
+    .import-header h2 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 10px 0;
+    }
+    .import-header p {
+        color: #64748b;
+        font-size: 14px;
+    }
+    .form-group {
+        margin-bottom: 25px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    .file-drop-area {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        padding: 40px 20px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        transition: 0.2s;
+        background: #f8fafc;
+        cursor: pointer;
+    }
+    .file-drop-area:hover {
+        border-color: #10b981;
+        background: #f0fdf4;
+    }
+    .file-drop-area i {
+        font-size: 32px;
+        color: #94a3b8;
+        margin-bottom: 12px;
+    }
+    .file-drop-area input[type=file] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    .file-name-display {
+        margin-top: 10px;
+        font-weight: 700;
+        color: #059669;
+        font-size: 14px;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f1f5f9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .checkbox-group input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    .checkbox-group label {
+        margin: 0;
+        font-weight: 700;
+        color: #334155;
+        cursor: pointer;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-weight: 800;
+        font-size: 16px;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+    .btn-back {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+    }
+    .btn-back:hover {
+        color: #334155;
+    }
+    .excel-instructions {
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+    }
+    .excel-instructions h4 {
+        font-weight: 800;
+        color: #475569;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    .excel-instructions ul {
+        padding-right: 20px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="import-container">
+    <div class="import-header">
+        <i class="fas fa-file-import"></i>
+        <h2>استيراد ملف نتائج القرعة (Excel)</h2>
+        <p>قم برفع ملف الإكسل لتحديث وتغذية قاعدة بيانات قرعة الإسكان 2026</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>اختر ملف نتائج القرعة (.xlsx)</label>
+            <div class="file-drop-area" id="dropArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span id="uploadText">اسحب وأفلت الملف هنا أو انقر للاختيار</span>
+                <input type="file" name="excel_file" id="fileInput" accept=".xlsx" required>
+                <div class="file-name-display" id="fileName"></div>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" name="clear_existing" id="clear_existing" value="1">
+            <label for="clear_existing">مسح جميع نتائج القرعة المخزنة مسبقاً قبل عملية الاستيراد الجديدة</label>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-check-circle" style="margin-left: 5px;"></i> بدء عملية الاستيراد الآن
+        </button>
+
+        <a href=".." class="btn-back">
+            <i class="fas fa-arrow-left" style="margin-left: 5px;"></i> العودة لقائمة نتائج القرعة
+        </a>
+    </form>
+
+    <div class="excel-instructions">
+        <h4><i class="fas fa-info-circle" style="margin-left: 5px; color: #3b82f6;"></i> هيكل أعمدة ملف الإكسل المطلوبة:</h4>
+        <ul>
+            <li>يجب أن يحتوي الجدول على الأعمدة بالترتيب التالي:</li>
+            <li><strong>العضوية:</strong> رقم كود تسلسلي (اختياري)</li>
+            <li><strong>رقم العضوية:</strong> رقم العضوية الحقيقي (مهم جداً للمطابقة)</li>
+            <li><strong>الاســــــم:</strong> اسم الفائز بالقرعة</li>
+            <li><strong>النادى:</strong> اسم النادي (بورسعيد، رأس البر، جمصة، إلخ...)</li>
+            <li><strong>الوصف:</strong> وصف للوحدة السكنية</li>
+            <li><strong>رقم الوحدة:</strong> رقم الشقة الفائز بها</li>
+            <li><strong>الفترة:</strong> رقم الفوج/الأسبوع الفائز به (1، 2، 3، إلخ...)</li>
+            <li><strong>التليفون:</strong> رقم هاتف العضو (اختياري)</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const uploadText = document.getElementById('uploadText');
+    const dropArea = document.getElementById('dropArea');
+
+    fileInput.addEventListener('change', function(e) {
+        if (fileInput.files.length > 0) {
+            fileName.textContent = `الملف المختار: ${fileInput.files[0].name}`;
+            uploadText.textContent = "تم اختيار الملف بنجاح";
+            dropArea.style.borderColor = "#10b981";
+            dropArea.style.background = "#f0fdf4";
+        } else {
+            fileName.textContent = "";
+            uploadText.textContent = "اسحب وأفلت الملف هنا أو انقر للاختيار";
+            dropArea.style.borderColor = "#cbd5e1";
+            dropArea.style.background = "#f8fafc";
+        }
+    });
+</script>
+{% endblock %}

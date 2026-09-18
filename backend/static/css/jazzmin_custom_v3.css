@@ -1,0 +1,659 @@
+/* ======================================================================= */
+/* CLEANED AND UNIFIED CUSTOM CSS FOR JAZZMIN (OFFLINE MODE)             */
+/* ======================================================================= */
+
+/* Imports MUST be at the very top */
+@import url("cairo.css");
+@import url("source_sans_pro.css");
+:main-header {
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    min-height: 60px !important; /* Increase height */
+    height: auto !important;
+}
+
+/* ============================================= */
+/* 2. Fix Main Form Width & Wasted Space         */
+/* ============================================== */
+#content-main form > .row > .col-lg-9,
+#content-main form > .row > .col-md-9,
+.app-main .content .row > .col-lg-9,
+.app-main .content .row > .col-md-9 {
+    flex: 0 0 85% !important;
+    max-width: 85% !important;
+}
+
+#content-main form > .row > .col-lg-3,
+#content-main form > .row > .col-md-3,
+.app-main .content .row > .col-lg-3,
+.app-main .content .row > .col-md-3 {
+    flex: 0 0 15% !important;
+    max-width: 15% !important;
+}
+
+/* ============================================= */
+/* 3. Fix Period/Week Select2 Dropdown Size      */
+/* ============================================= */
+.related-widget-wrapper {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.related-widget-wrapper > select,
+.related-widget-wrapper > .select2-container {
+    width: 100% !important;
+    flex-grow: 1 !important;
+}
+.form-group .select2-container {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* ============================================= */
+/* 4. Sidebar & General Branding Styling         */
+/* ============================================= */
+.main-sidebar {
+    background-color: var(--brand-secondary) !important;
+}
+.nav-sidebar .nav-item>.nav-link.active {
+    background-color: var(--brand-primary) !important;
+    color: #e6d2d2 !important;
+}
+.card-primary.card-outline {
+    border-top: 3px solid var(--brand-primary) !important;
+}
+.btn-primary {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+}
+.btn-primary:hover {
+    opacity: 0.9;
+    background-color: #0284c7 !important;
+}
+
+/* ============================================= */
+/* 5. Select2, Calendar & UI Components Fixes    */
+/* ============================================= */
+.select2-container--default .select2mselection--single {
+    text-align: right !important;
+    direction: rtl !important;
+}
+.calendarbox, .clockbox {
+    width: auto !important;
+    min-width: 280px !important;
+    z-index: 9999 !important;
+}
+.calendar table { width: 100% !important; }
+.calendar th, .calendar td {
+    padding: 8px !important;
+    text-align: center !important;
+    font-size: 14px !important;
+}
+.calendar caption {
+    text-align: center !important;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+.inline-radios ul {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex; gap: 20px;
+}
+.inline-radios li {
+    diplay: inline-flex; align-items: center; gap: 5px;
+}
+
+/* ============================================= */
+/* 6. Permissions / Filter Boxes Fixes           */
+/* ============================================= */
+.selector {
+    width: auto !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: auto !important;
+    direction: rtl !important;
+    display: block !important;
+    overflow: hidden !important;
+    padding-top: 10px;
+    box-sizing: border-box !important;
+}
+.selector-available, .selector-chosen {
+    width: 400px !important;
+    max-width: 45% !important;
+    float: right !important;
+    margin-left: 10px !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+    box-sizing: border-box !important;
+}
+.selector-chooser {
+    float: right !important;
+    width: 60px !important;
+    padding: 100px 5px 0 5px !important;
+    margin: 0 !important;
+    list-style: none;
+}
+.selector-chooser li { margin-bottom: 10px; }
+.selector .selector-available input, .selector .selector-chosen input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 8px !important;
+}
+.selector select {
+    width: 100% !important;
+    height: 400px !important;
+    font-size: 14px !important;
+    font-family: 'Cairo', sans-serif !important;
+    border: 1px solid #ccc !important;
+}
+.selector-available h2, .selector-chosen h2 {
+    background: #343a40 !important;
+    color: white !important;
+    padding: 8px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+}
+
+/* ============================================ */
+/* 7. Branding & Footer                          */
+/* ============================================ */
+.navbar-brand {
+    padding: 8px 25px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    margin-right: 20px !important;
+    transition: all 0.3s ease;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+}
+.navbar-brand img, .navbar-brand i, .brand-link img, .brand-image {
+    display: none !important;
+}
+.navbar-brand:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: #6e0505 !important;
+    transform: translateY(-1px);
+}
+.main-footer {
+    border-top: 3px solid var(--brand-primary) !important;
+    background: #ffffff !important;
+    padding: 15px 30px !important;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+.main-footer strong, .main-footer span {
+    display: inline-block;
+    padding: 6px 15px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 6px;
+    color: #1e293b !important;
+    font-weight: 700 !important;
+}
+
+/* ======================================================================= */
+/* MODERN SAAS UI REVAMP (SOFT UI, GLASSMORPHISM, ANIMATIONS)            */
+/* ======================================================================= */
+
+/* 1. Global Aesthetic & Entry Animations */
+.app-main {
+    background-color: #f8fafc !important;
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.app-main .card {
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; /* Starts hidden until animation kicks in */
+}
+
+/* Staggered animation for cards (assuming max 10 cards for simplicity) */
+.app-main .card:nth-child(1) { animation-delay: 0.1s; }
+.app-main .card:nth-child(2) { animation-delay: 0.2s; }
+.app-main .card:nth-child(3) { animation-delay: 0.3s; }
+.app-main .card:nth-child(4) { animation-delay: 0.4s; }
+.app-main .card:nth-child(n+5) { animation-delay: 0.5s; }
+
+/* 2. Modern Cards (Soft UI) */
+.card {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+    transition: all 0.3s ease !important;
+    background: #ffffff !important;
+}
+
+.card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+    background-color: transparent !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 1rem 1.25rem !important;
+}
+
+/* 3. App Lists & Buttons (Center/Right column) */
+.card-header h5, .card-title {
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: #1e293b !important;
+}
+
+.table td, .table th {
+    padding: 1rem 0.75rem !important;
+    vertical-align: middle !important;
+    border-top: 1px solid #f1f5f9 !important;
+}
+
+.btn-success, .btn-info, .btn-primary {
+    border-radius: 20px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 0.35rem 1rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25) !important;
+}
+.btn-success:hover {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25) !important;
+}
+.btn-info:hover {
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 4. Timeline / Recent Actions (Left column) */
+#recent-actions-module .timeline {
+    margin: 0 !important;
+    padding: 10px 0 !important;
+}
+
+#recent-actions-module .timeline > div {
+    margin-bottom: 15px !important;
+    margin-right: 0 !important;
+    position: relative !important;
+}
+
+/* Remove ugly background from timeline icons */
+#recent-actions-module .timeline > div > .fas,
+#recent-actions-module .timeline > div > .far,
+#recent-actions-module .timeline > div > .fab,
+#recent-actions-module .timeline > div > .fa,
+#recent-actions-module .timeline > div > .svg-inline--fa {
+    background: #e2e8f0 !important;
+    color: #64748b !important;
+    box-shadow: none !important;
+    border-radius: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 10px !important;
+    right: 5px !important;
+    top: 5px !important;
+}
+
+#recent-actions-module .timeline-item {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-right: 40px !important;
+    padding: 0 !important;
+}
+
+#recent-actions-module .timeline-item > .time {
+    color: #94a3b8 !important;
+    font-size: 0.75rem !important;
+    float: left !important;
+    padding: 5px !important;
+}
+
+#recent-actions-module .timeline-item > .timeline-header {
+    border: none !important;
+    color: #475569 !important;
+    font-size: 0.9rem !important;
+    padding: 5px 0 !important;
+}
+
+#recent-actions-module .timeline-item > .timeline-header a {
+    color: #0ea5e9 !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+#recent-actions-module .timeline-item > .timeline-header a:hover {
+    text-decoration: underline !important;
+}
+
+/* 5. Top Navbar Enhancement */
+.app-header {
+    border-bottom: none !important;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.04) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(8px) !important; /* Subtle glassmorphism */
+}
+
+/* ======================================================================= */
+/* 6. Dashboard Cards Content (Zebra Striping & Hover)                     */
+/* ======================================================================= */
+.app-main .card-body table tbody tr:nth-child(odd),
+.app-main .card-body .nav-pills .nav-item:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+.app-main .card-body table tbody tr:nth-child(even),
+.app-main .card-body .nav-pills .nav-item:nth-child(even) {
+    background-color: #f8fafc !important;
+}
+
+.app-main .card-body table tbody tr,
+.app-main .card-body .nav-pills .nav-item {
+    transition: background-color 0.2s ease !important;
+    color: #334155 !important;
+}
+
+.app-main .card-body table tbody tr:hover,
+.app-main .card-body .nav-pills .nav-item:hover {
+    background-color: #f1f5f9 !important;
+}
+
+.app-main .card-body table tbody tr td,
+.app-main .card-body table tbody tr th {
+    color: #334155 !important;
+}
+
+/* ======================================================================= */
+/* 7. Top Navbar Links (Button-like & Active State)                        */
+/* ======================================================================= */
+.app-header .navbar-nav .nav-item > .nav-link {
+    border-radius: 8px !important;
+    margin: 0 4px !important;
+    color: #475569 !important;
+    transition: all 0.2s ease !important;
+    font-weight: 600 !important;
+    padding: 8px 12px !important;
+}
+
+/* Hover State (Inactive Links) */
+.app-header .navbar-nav .nav-item > .nav-link:not(.active):not(.dropdown-toggle):hover,
+.app-header .navbar-nav .nav-item > .nav-link:not(.active):hover {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+}
+
+/* Active State (Crucial) */
+.app-header .navbar-nav .nav-item > .nav-link.active,
+.app-header .navbar-nav .nav-item.active > .nav-link,
+.app-header .navbar-nav .nav-item > .nav-link[style*="font-weight: bold"] /* Fallback for Jazzmin active items */ {
+    background-color: #0ea5e9 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3) !important;
+}
+
+.app-main .card-body table tbody tr:nth-child(odd) > td, .app-main .card-body table tbody tr:nth-child(odd) > th { background-color: #ffffff !important; }
+.app-main .card-body table tbody tr:nth-child(even) > td, .app-main .card-body table tbody tr:nth-child(even) > th { background-color: #f8fafc !important; }
+
+/* ============================================= */
+/* 8. JAZZMIN DASHBOARD LISTS (Zebra Striping)   */
+/* ============================================= */
+
+/* Target the list items inside the dashboard cards */
+.app-main .card-body .nav.flex-column > .nav-item {
+    border-bottom: 1px solid #f1f5f9 !important; /* فاصل خفيف بين السطور */
+    transition: background-color 0.2s ease !important;
+}
+
+/* التخطيط المتبادل (Zebra Striping) للأسطر */
+.app-main .card-body .nav.flex-column > .nav-item:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+.app-main .card-body .nav.flex-column > .nav-item:nth-child(even) {
+    background-color: #f8fafc !important; /* لون رمادي/مائل للأزرق فاتح جداً */
+}
+
+/* تأثير الـ Hover على السطر بالكامل */
+.app-main .card-body .nav.flex-column > .nav-item:hover {
+    background-color: #e2e8f0 !important; /* لون أغمق قليلاً عند التمرير */
+}
+
+/* تحسين شكل الروابط داخل السطور */
+.app-main .card-body .nav.flex-column .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 15px !important;
+    color: var(--text-main) !important;
+    font-weight: 600 !important;
+}
+
+/* تنسيق أفضل لأزرار (أضف/تعديل) داخل الكروت */
+.app-main .card-body .nav.flex-column .nav-link .btn-group {
+    margin-right: auto !important; /* دفع الأزرار لأقصى اليسار في RTL */
+    margin-left: 0 !important;
+}
+
+/* ============================================= */
+/* 9. TOP NAVBAR ACTIVE BUTTON COLOR             */
+/* ============================================= */
+
+/* تحويل عناصر القائمة العلوية إلى أزرار وإعطاء اللون للزر النشط */
+.app-header .navbar-nav > .nav-item > .nav-link {
+    border-radius: 8px !important;
+    margin: 0 4px !important;
+    color: #475569 !important; /* لون رمادي أنيق للحالة العادية */
+    transition: all 0.2s ease !important;
+}
+
+.app-header .navbar-nav > .nav-item > .nav-link:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* تحديد الصفحة النشطة وتلوينها */
+.app-header .navbar-nav > .nav-item.dropdown > .nav-link.active, /* For Dropdowns */
+.app-header .navbar-nav > .nav-item > .nav-link.active {
+    background-color: var(--brand-primary) !important; /* الأزرق الرئيسي */
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3) !important; /* ظل خفيف */
+}
+
+/* Fallback for table-based Jazzmin lists */
+.app-main .card-body table tbody tr:nth-child(odd) > td, .app-main .card-body table tbody tr:nth-child(odd) > th { background-color: #ffffff !important; }
+.app-main .card-body table tbody tr:nth-child(even) > td, .app-main .card-body table tbody tr:nth-child(even) > th { background-color: #f8fafc !important; }
+
+/* 10. Fix Navbar Links Contrast */
+.app-header .navbar-nav > .nav-item > .nav-link {
+    color: #334155 !important; /* Make sure text is dark by default */
+    background-color: transparent !important;
+}
+
+.app-header .navbar-nav > .nav-item > .nav-link:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+/* Fix specific Jazzmin buttons in the navbar like 'رجوع' if they use btn-danger or similar */
+.app-header .navbar-nav > .nav-item > .nav-link.btn-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+.app-header .navbar-nav > .nav-item > .nav-link.btn-primary {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+.app-header .navbar-nav > .nav-item > .nav-link.btn-info {
+    background-color: #0dcaf0 !important;
+    color: #ffffff !important;
+}
+.app-header .navbar-nav > .nav-item > .nav-link.active {
+    background-color: #0ea5e9 !important;
+    color: #ffffff !important;
+}
+
+/* 11. Card Headers (Dark Blue) */
+.app-main .card .card-header {
+    background-color: #0369a1 !important; /* Dark blue */
+    border-bottom: 1px solid #0284c7 !important;
+}
+.app-main .card .card-header h5, 
+.app-main .card .card-header .card-title {
+    color: #ffffff !important; /* White text for contrast */
+    font-weight: 700 !important;
+    /* Very light sky blue */
+    border-bottom: 1px solid #e0f2fe !important;
+}
+.app-main .card .card-header h5, 
+.app-main .card .card-header .card-title {
+    color: #ffffff !important; /* White text */
+    font-weight: 700 !important;
+}
+
+
+
+
+/* 12. Top Navbar (Dark Blue Background & Spacious) */
+.app-header.navbar {
+    background-color: #0369a1 !important; /* Dark Blue */
+    border-bottom: none !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    min-height: 65px !important; 
+}
+
+/* Default links text color to white */
+.app-header .navbar-nav > .nav-item > .nav-link {
+    color: #ffffff !important;
+    background-color: transparent !important;
+    padding: 10px 15px !important; 
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+}
+
+/* Hover & Active states for the normal links */
+.app-header .navbar-nav > .nav-item > .nav-link:hover,
+.app-header .navbar-nav > .nav-item > .nav-link.active,
+.app-header .navbar-nav > .nav-item.active > .nav-link {
+    background-color: #ffffff !important;
+    color: #0369a1 !important; /* أزرق غامق */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* User Account Dropdown */
+.app-header .navbar-nav > .nav-item.dropdown.user-menu > .nav-link,
+.app-header .navbar-nav > .nav-item.dropdown > .nav-link {
+    background-color: #ffffff !important; 
+    color: #0369a1 !important; 
+}
+
+.app-header .navbar-nav > .nav-item.dropdown.user-menu > .nav-link:hover,
+.app-header .navbar-nav > .nav-item.dropdown > .nav-link:hover {
+    background-color: #e0f2fe !important; 
+    color: #0369a1 !important;
+}
+
+/* 13. Fix Navbar Search Inputs */
+/* Hide the second search box (Members) */
+.app-header form.d-flex:nth-of-type(2),
+.app-header .navbar-nav > .nav-item:nth-child(3) form,
+.app-header form[action*='member'],
+.app-header form[action*='Member'],
+.app-header form[action*='user'] {
+    display: none !important;
+}
+
+/* Style the remaining search box */
+.app-header form.d-flex .input-group {
+    width: 250px !important; /* تكبير العرض */
+}
+.app-header form.d-flex .input-group input {
+    font-size: 13px !important; /* تصغير الخط */
+    padding: 6px 12px !important;
+}
+
+/* 14. Fix ALL buttons in navbar (زر الرجوع) */
+/* Force dark blue text for any button inside the navbar */
+.app-header .btn,
+.app-header .navbar-nav .btn,
+.app-header .navbar-nav a.btn,
+.app-header .navbar-nav .nav-item .btn,
+.app-header .navbar-nav > .nav-item > .nav-link.btn-danger,
+.app-header .navbar-nav > .nav-item > .nav-link.btn-primary,
+.app-header .navbar-nav > .nav-item > .nav-link.btn {
+    color: #0f172a !important; /* أزرق غامق جداً يميل للسواد */
+    background-color: #ffffff !important; /* Make sure background is white so it is visible */
+    font-weight: 900 !important;
+    border: none !important;
+}
+
+.app-header .btn:hover,
+.app-header .navbar-nav .btn:hover,
+.app-header .navbar-nav > .nav-item > .nav-link.btn-danger:hover {
+    color: #0f172a !important; 
+    background-color: #e0f2fe !important;
+}
+
+/* ======================================================================= */
+/* 15. Fix Search Buttons (ابحث) Text Color to Dark Blue                 */
+/* ======================================================================= */
+/* 15. Fix Search Buttons (ابحث) and Execute Buttons (نفذ)                 */
+/* ======================================================================= */
+button[type="submit"]:not(.btn-navbar):not(.dropdown-item),
+input[type="submit"]:not(.btn-navbar):not(.dropdown-item),
+.actions button[type="submit"],
+#changelist-search button[type="submit"],
+.form-group button[type="submit"] {
+    background-color: #ffffff !important; /* خلفية بيضاء بناء على طلبك */
+    color: #0369a1 !important; /* خط أزرق غامق بناء على طلبك */
+    border: 2px solid #0369a1 !important; /* إطار أزرق غامق */
+    font-weight: 900 !important;
+    padding: 6px 15px !important;
+    border-radius: 6px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    text-align: center !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: #0369a1 !important; /* إجبار المتصفح على جعل النص أزرق غامق */
+}
+
+button[type="submit"]:not(.btn-navbar):not(.dropdown-item):hover,
+input[type="submit"]:not(.btn-navbar):not(.dropdown-item):hover,
+.actions button[type="submit"]:hover,
+#changelist-search button[type="submit"]:hover,
+.form-group button[type="submit"]:hover {
+    background-color: #0284c7 !important; /* لون أزرق عند التمرير */
+    color: #ffffff !important; /* خط أبيض عند التمرير */
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* ======================================================================= */
+/* 16. Spacing and Alignment (User Menu to Left)                           */
+/* ======================================================================= */
+.app-header .navbar-nav {
+    width: 100% !important;
+    gap: 12px !important; /* زيادة المسافة بين جميع الأزرار */
+}
+.app-header .navbar-nav > .nav-item.dropdown.user-menu {
+    margin-right: auto !important; /* دفع زر حساب المستخدم لأقصى اليسار */
+}

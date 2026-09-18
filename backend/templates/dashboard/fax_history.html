@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <title>سجل الملاحق المطبوعة</title>
+    <link rel="stylesheet" href="{% static 'css/cairo.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        select, .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .badge-secondary { background-color: #6c757d; }
+        .badge-info { background-color: #17a2b8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-actions">
+        <h1><i class="fas fa-history"></i> سجل الملاحق والفاكسات المطبوعة</h1>
+        <a href="javascript:history.back()" class="btn" style="background-color: #6c757d;"><i class="fas fa-arrow-right"></i> رجوع</a>
+    </div>
+
+    <form method="GET" style="margin-bottom: 20px;">
+        <label for="club">تصفية بالنادي: </label>
+        <select name="club" id="club" onchange="this.form.submit()">
+            <option value="">-- جميع النوادي --</option>
+            {% for club in clubs %}
+            <option value="{{ club.id }}" {% if selected_club == club.id|stringformat:"s" %}selected{% endif %}>{{ club.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>م</th>
+                <th>النادي</th>
+                <th>رقم الأسبوع / الفترة</th>
+                <th>رقم الملحق</th>
+                <th>عدد الحجوزات</th>
+                <th>تاريخ الإصدار</th>
+                <th>بواسطة</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in histories %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ history.club.name }}</td>
+                <td>{{ history.period.name|default:"--" }}</td>
+                <td>
+                    {% if history.supplement_number == 0 %}
+                        <span class="badge badge-secondary">فاكس رئيسي</span>
+                    {% else %}
+                        <span class="badge badge-info">ملحق ({{ history.supplement_number }})</span>
+                    {% endif %}
+                </td>
+                <td>{{ history.bookings.count }}</td>
+                <td>{{ history.print_date|date:"Y-m-d h:i A" }}</td>
+                <td>{{ history.printed_by.username|default:"غير معروف" }}</td>
+                <td>
+                    <a href="{% url 'fax_report' %}?club={{ history.club_id }}&period={{ history.period_id|default:'' }}&history_id={{ history.id }}" class="btn" target="_blank">
+                        <i class="fas fa-eye"></i> عرض وطباعة
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">لا توجد ملاحق محفوظة حتى الآن.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

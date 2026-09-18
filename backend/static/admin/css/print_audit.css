@@ -1,0 +1,51 @@
+/* 
+   إصلاحات الطباعة لتقارير الرقابة
+   تخفيض العناصر غير الضرورية وإظهار الجدول فقط
+*/
+
+@media print {
+    /* إخفاء القوائم الجانبية وأزرار البحث */
+    #header, .main-sidebar, .breadcrumb, .nav-tabs, .btn, .filter-column, .card-header, .footer, .actions {
+        display: none !important;
+    }
+
+    /* ضبط محتوى الصفحة للطباعة */
+    .content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    body, .content {
+        background: white !important;
+        color: black !important;
+        direction: rtl !important;
+    }
+
+    /* تنسيق الجدول */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 12pt !important;
+    }
+
+    th, td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+        text-align: right !important;
+    }
+
+    th {
+        background-color: #f2f2f2 !important;
+    }
+
+    /* إضافة عنوان للتقرير */
+    body::before {
+        content: "تقرير سجل الرقابة - نظام إدارة الإسكان";
+        display: block;
+        text-align: center;
+        font-size: 18pt;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,252 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .bp-container { padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); direction: rtl; font-family: 'Tajawal', sans-serif; }
+        .bp-section { margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+        .bp-header { background: #f5f5f5; padding: 12px 15px; font-weight: bold; font-size: 16px; border-bottom: 1px solid #e0e0e0; color: #333; }
+        
+        .bp-tree { padding: 15px; }
+        .bp-node { margin-bottom: 10px; border: 1px solid #e3f2fd; border-radius: 4px; overflow: hidden; }
+        .bp-node-header { display: flex; align-items: center; padding: 10px; background: #e3f2fd; cursor: pointer; gap: 10px; }
+        .bp-node-content { padding: 10px 10px 10px 30px; display: none; background: #fafafa; border-top: 1px solid #e3f2fd; }
+        .bp-node.open > .bp-node-content, 
+        .bp-building-node.open > .bp-node-content, 
+        .bp-type-node.open > .bp-node-content,
+        .bp-cls-node.open > .bp-node-content { display: block; }
+        
+        .bp-building-node { border: 1px solid #e8f5e9; margin-bottom: 8px; border-radius: 4px; }
+        .bp-building-header { display: flex; align-items: center; padding: 8px; background: #e8f5e9; cursor: pointer; gap: 8px; }
+        
+        .bp-cls-node { border: 1px solid #fff3e0; margin-bottom: 6px; border-radius: 4px; margin-right: 20px; }
+        .bp-cls-header { display: flex; align-items: center; padding: 6px; background: #fff3e0; cursor: pointer; gap: 6px; }
+        
+        .bp-unit-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin-right: 20px; }
+        .bp-unit-lbl { background: white; border: 1px solid #ccc; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; }
+        .bp-unit-lbl:hover { background: #f0f0f0; }
+        
+        .bp-form-grid { display: flex; flex-direction: column; gap: 15px; padding: 15px; }
+        .bp-form-row { display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px solid #eee; }
+        .bp-form-row label { width: 150px; font-weight: bold; }
+        .bp-form-row input, .bp-form-row select, .bp-form-row textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; max-width: 400px; }
+        
+        .toggle-icon { width: 20px; text-align: center; font-weight: bold; color: #666; transition: 0.2s; }
+        .bp-node.open > .bp-node-header > .toggle-icon,
+        .bp-building-node.open > .bp-building-header > .toggle-icon,
+        .bp-type-node.open > .bp-type-header > .toggle-icon,
+        .bp-cls-node.open > .bp-cls-header > .toggle-icon { transform: rotate(90deg); }
+        
+        .submit-btn { background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .submit-btn:hover { background: #45a049; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="bp-container" id="bp-app">
+    <h2 style="margin-top:0; color:#1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">إضافة المخصصات</h2>
+    <p>قم باختيار الوحدات المراد تخصيصها عبر الشجرة الهرمية، ثم حدد بيانات المخصص بالأسفل.</p>
+
+    <form method="post" id="bulk_allocation_form">
+        {% csrf_token %}
+
+        <div class="bp-section">
+            <div class="bp-header">1. اختر الوحدات</div>
+            <div class="bp-tree" id="clubs-container">
+                <div style="text-align:center; padding: 20px; color: #666;">جاري تحميل الهيكل...</div>
+            </div>
+        </div>
+
+        <div class="bp-section">
+            <div class="bp-header">2. بيانات المخصص</div>
+            <div class="bp-form-grid">
+                <div class="bp-form-row">
+                    <label>نوع المخصص *</label>
+                    <select name="allocation_type" required>
+                        <option value="">-- اختر النوع --</option>
+                        {% for val, name in allocation_types %}
+                            <option value="{{ val }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="bp-form-row">
+                    <label>الجهة المخصص لها</label>
+                    <input type="text" name="allocated_to" placeholder="اسم الجهة أو الشخص (اختياري)">
+                </div>
+                <div class="bp-form-row">
+                    <label>تاريخ البداية</label>
+                    <input type="date" name="start_date">
+                </div>
+                <div class="bp-form-row">
+                    <label>تاريخ النهاية</label>
+                    <input type="date" name="end_date">
+                </div>
+                <div class="bp-form-row">
+                    <label>إنشاء حجز فعلي</label>
+                    <label style="display:flex; align-items:center; gap:8px; font-weight:normal; width:auto;">
+                        <input type="checkbox" name="create_booking" value="1" style="width:20px; height:20px;" {% if request.POST.create_booking == '1' %}checked{% endif %}>
+                        إضافة كمشغول أو محجوز (إنشاء حجز مؤكد)
+                    </label>
+                </div>
+                {% if show_override_checkbox %}
+                <div class="bp-form-row" style="background: #fff3cd; border-color: #ffeeba;">
+                    <label style="color: #dc3545;">تجاوز التعارض *</label>
+                    <label style="display:flex; align-items:center; gap:8px; font-weight:bold; width:auto; color: #dc3545;">
+                        <input type="checkbox" name="override_booking_conflicts" value="1" style="width:20px; height:20px;">
+                        تأكيد حذف الحجوزات المتعارضة السابقة وإحلال المخصص كحجز جديد
+                    </label>
+                </div>
+                {% endif %}
+                <div class="bp-form-row">
+                    <label>ملاحظات</label>
+                    <textarea name="notes" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: left; margin-top: 20px;">
+            <button type="submit" class="submit-btn" id="submit_btn">حفظ المخصصات (<span id="sel_count">0</span> وحدة محددة)</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch hierarchy using the PricingRule endpoint (it returns exactly what we need)
+        fetch('/admin/inventory/pricingrule/get-hierarchy/')
+            .then(res => res.json())
+            .then(data => {
+                renderTree(data.clubs);
+            })
+            .catch(err => {
+                document.getElementById('clubs-container').innerHTML = '<div style="color:red; padding:10px;">حدث خطأ أثناء تحميل الهيكل</div>';
+            });
+            
+        function renderTree(clubs) {
+            const container = document.getElementById('clubs-container');
+            container.innerHTML = '';
+            
+            clubs.forEach(club => {
+                const clubNode = document.createElement('div');
+                clubNode.className = 'bp-node';
+                clubNode.innerHTML = `
+                    <div class="bp-node-header">
+                        <span class="toggle-icon">▶</span>
+                        <input type="checkbox" class="club-cb" data-id="${club.id}">
+                        <strong style="font-size:15px; color:#1565c0;">${club.name}</strong>
+                    </div>
+                    <div class="bp-node-content club-content"></div>
+                `;
+                
+                const clubContent = clubNode.querySelector('.club-content');
+                const clubCb = clubNode.querySelector('.club-cb');
+                
+                club.buildings.forEach(b => {
+                    const bNode = document.createElement('div');
+                    bNode.className = 'bp-building-node';
+                    bNode.innerHTML = `
+                        <div class="bp-building-header">
+                            <span class="toggle-icon">▶</span>
+                            <input type="checkbox" class="build-cb" data-id="${b.id}">
+                            <strong style="color:#2e7d32;">عمارة / ${b.name}</strong>
+                        </div>
+                        <div class="bp-node-content build-content"></div>
+                    `;
+                    
+                    const bContent = bNode.querySelector('.build-content');
+                    const bCb = bNode.querySelector('.build-cb');
+                    
+                    b.classifications.forEach(cls => {
+                        const clsNode = document.createElement('div');
+                        clsNode.className = 'bp-cls-node';
+                        clsNode.innerHTML = `
+                            <div class="bp-cls-header">
+                                <span class="toggle-icon">▶</span>
+                                <input type="checkbox" class="cls-cb">
+                                <strong style="color:#e65100;">تصنيف: ${cls.name}</strong>
+                            </div>
+                            <div class="bp-node-content cls-content"></div>
+                        `;
+                        const clsContent = clsNode.querySelector('.cls-content');
+                        const clsCb = clsNode.querySelector('.cls-cb');
+                        
+                        cls.unit_types.forEach(ut => {
+                            const utNode = document.createElement('div');
+                            utNode.className = 'bp-type-node';
+                            utNode.innerHTML = `
+                                <div style="display:flex; align-items:center; gap:6px; padding:4px 10px; background:#fafafa; cursor:pointer;" class="bp-type-header">
+                                    <span class="toggle-icon" style="font-size:12px;">▶</span>
+                                    <input type="checkbox" class="type-cb">
+                                    <span style="color:#424242;">النموذج: ${ut.name}</span>
+                                </div>
+                                <div class="bp-node-content bp-unit-grid"></div>
+                            `;
+                            const uGrid = utNode.querySelector('.bp-unit-grid');
+                            const typeCb = utNode.querySelector('.type-cb');
+                            
+                            ut.units.forEach(u => {
+                                const uLbl = document.createElement('label');
+                                uLbl.className = 'bp-unit-lbl';
+                                uLbl.innerHTML = `
+                                    <input type="checkbox" name="units" value="${u.id}" class="unit-cb">
+                                    وحدة ${u.name}
+                                `;
+                                uGrid.appendChild(uLbl);
+                            });
+                            clsContent.appendChild(utNode);
+                            
+                            setupCheckboxHierarchy(typeCb, Array.from(uGrid.querySelectorAll('.unit-cb')));
+                        });
+                        bContent.appendChild(clsNode);
+                        setupCheckboxHierarchy(clsCb, Array.from(clsContent.querySelectorAll('.unit-cb')));
+                    });
+                    clubContent.appendChild(bNode);
+                    setupCheckboxHierarchy(bCb, Array.from(bContent.querySelectorAll('.unit-cb')));
+                });
+                container.appendChild(clubNode);
+                setupCheckboxHierarchy(clubCb, Array.from(clubContent.querySelectorAll('.unit-cb')));
+            });
+
+            // Toggles
+            document.querySelectorAll('.toggle-icon').forEach(icon => {
+                icon.parentElement.addEventListener('click', function(e) {
+                    if(e.target.type !== 'checkbox') {
+                        this.parentElement.classList.toggle('open');
+                    }
+                });
+            });
+
+            // Update counter
+            document.getElementById('clubs-container').addEventListener('change', function(e) {
+                if(e.target.type === 'checkbox') {
+                    let count = document.querySelectorAll('.unit-cb:checked').length;
+                    document.getElementById('sel_count').innerText = count;
+                }
+            });
+        }
+        
+        function setupCheckboxHierarchy(parentCb, childCbs) {
+            parentCb.addEventListener('change', function() {
+                childCbs.forEach(cb => cb.checked = this.checked);
+            });
+            childCbs.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const allChecked = childCbs.every(c => c.checked);
+                    const someChecked = childCbs.some(c => c.checked);
+                    parentCb.checked = allChecked;
+                    parentCb.indeterminate = someChecked && !allChecked;
+                });
+            });
+        }
+
+        // Form validation
+        document.getElementById('bulk_allocation_form').addEventListener('submit', function(e) {
+            if(document.querySelectorAll('.unit-cb:checked').length === 0) {
+                e.preventDefault();
+                alert('يجب اختيار وحدة واحدة على الأقل');
+            }
+        });
+    });
+</script>
+{% endblock %}

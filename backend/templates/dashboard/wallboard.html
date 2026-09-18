@@ -5,383 +5,1273 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>لوحة المتابعة - منظومة إدارة المصايف</title>
+    <!-- Modern Cairo and Inter Fonts -->
+    <link rel="stylesheet" href="{% static 'css/cairo.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    
     <style>
       :root {
-        --bg: #f6f1ea;
-        --bg-accent: #f1e6d7;
-        --ink: #2a241f;
-        --muted: #6a5f56;
-        --brand: #0f4c5c;
-        --brand-soft: #dfeef0;
-        --border: #e3d7cb;
-        --chip-text: #1e1a17;
-        --chip-available: #e7f6ef;
-        --chip-occupied: #fbe4e6;
-        --chip-reserved: #fff3cf;
-        --chip-lottery: #e5ecff;
-        --chip-maintenance: #f4e8ff;
-        --chip-notbookable: #ececec;
+        --primary: #0ea5e9;
+        --secondary: #6366f1;
+        --accent: #f43f5e;
+        --bg: #f1f5f9;
+        --card: rgba(255, 255, 255, 0.82);
+        --text: #0f172a;
+        --text-muted: #64748b;
+        --border: rgba(255, 255, 255, 0.4);
+        
+        --status-available: #10b981;
+        --status-occupied: #f43f5e;
+        --status-reserved: #f59e0b;
+        --status-lottery: #6366f1;
+        --status-maint: #8b5cf6;
+        --status-allocated: #0ea5e9;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        height: 100%;
       }
 
       body {
-        margin: 0;
-        font-family: "Cairo", "Tajawal", "Noto Naskh Arabic", "Amiri", serif;
-        color: var(--ink);
-        background: radial-gradient(
-            circle at 10% 20%,
-            rgba(255, 255, 255, 0.75),
-            rgba(246, 241, 234, 0.3)
-          ),
-          linear-gradient(180deg, #fffaf4, var(--bg));
+        font-family: 'Cairo', 'Inter', sans-serif;
+        background: radial-gradient(circle at top right, #e0f2fe, #f1f5f9);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
       }
 
-      .page {
-        padding: 24px 20px 48px;
-        max-width: 1300px;
+      .orb {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -1;
+        opacity: 0.5;
+        animation: float 20s infinite alternate linear;
+      }
+      .orb-1 { background: #bae6fd; top: -10%; left: -10%; }
+      .orb-2 { background: #ddd6fe; bottom: -10%; right: -10%; animation-delay: -5s; }
+
+      @keyframes float {
+        from { transform: translate(0, 0); }
+        to { transform: translate(100px, 100px); }
+      }
+
+      .container {
+        max-width: 1650px;
         margin: 0 auto;
-      }
-
-      header {
+        padding: 20px 24px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 28px;
-        letter-spacing: 0.2px;
-        color: var(--brand);
-      }
-
-      .subtitle {
-        color: var(--muted);
-        font-size: 15px;
-      }
-
-      .filters {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 16px;
-        box-shadow: 0 12px 30px rgba(32, 24, 17, 0.08);
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      label {
-        font-size: 13px;
-        color: var(--muted);
-      }
-
-      select,
-      input {
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-family: inherit;
-        font-size: 14px;
-        background: #fff;
-      }
-
-      .actions {
-        display: flex;
-        gap: 10px;
-        align-items: end;
-      }
-
-      .btn {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 12px;
-        background: var(--brand);
-        color: #fff;
-        font-family: inherit;
-        cursor: pointer;
-        font-size: 14px;
-      }
-
-      .btn.secondary {
-        background: #cfe5ea;
-        color: var(--brand);
-      }
-
-      .summary {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-      }
-
-      .summary-card {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 12px 16px;
-        min-width: 140px;
-        box-shadow: 0 10px 24px rgba(32, 24, 17, 0.06);
-      }
-
-      .summary-card span {
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .summary-card strong {
-        display: block;
-        font-size: 18px;
-        margin-top: 4px;
-        color: var(--ink);
-      }
-
-      .table-wrap {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 12px;
-        overflow-x: auto;
-        box-shadow: 0 14px 32px rgba(32, 24, 17, 0.08);
-      }
-
-      table {
+        flex: 1;
         width: 100%;
-        border-collapse: collapse;
-        min-width: 900px;
       }
 
-      th,
-      td {
-        padding: 10px 8px;
-        border-bottom: 1px solid var(--border);
+      /* Navigation Bar */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background: var(--card);
+        backdrop-filter: blur(12px);
+        padding: 14px 32px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary);
+      }
+      .brand img { height: 40px; }
+
+      .nav-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      /* Buttons Premium */
+      .btn {
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: inherit;
+        font-size: 13.5px;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: 0 8px 12px -3px rgba(14, 165, 233, 0.2);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 20px -5px rgba(14, 165, 233, 0.3);
+      }
+      .btn-glass {
+        background: rgba(255,255,255,0.5);
+        border: 1px solid var(--border);
+        color: var(--text);
+        backdrop-filter: blur(4px);
+      }
+      .btn-glass:hover {
+        background: rgba(255,255,255,0.9);
+        transform: translateY(-2px);
+      }
+      .btn-icon { width: 42px; height: 42px; justify-content: center; padding: 0; }
+
+      /* KPI Grid */
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        margin-bottom: 25px;
+      }
+
+      .kpi-card {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        padding: 24px;
+        border-radius: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+      }
+      .kpi-card:hover { transform: translateY(-5px); }
+      .kpi-card h3 { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+      .kpi-card .value { font-size: 32px; font-weight: 800; }
+      .kpi-card .icon {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 24px;
+        opacity: 0.15;
+      }
+      .kpi-card.purple { border-bottom: 4px solid var(--secondary); }
+      .kpi-card.blue { border-bottom: 4px solid var(--primary); }
+      .kpi-card.emerald { border-bottom: 4px solid var(--status-available); }
+      .kpi-card.rose { border-bottom: 4px solid var(--status-occupied); }
+      .kpi-card.amber { border-bottom: 4px solid var(--status-reserved); }
+
+      /* Filters Glass Box */
+      .filters-box {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+      }
+
+      .input-group { display: flex; flex-direction: column; gap: 6px; }
+      .input-group label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+      
+      .input-group select, .input-group input {
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(0,0,0,0.06);
+        background: rgba(255,255,255,0.7);
+        font-family: inherit;
+        font-size: 13.5px;
+        width: 100%;
+      }
+
+      /* Club Title Header */
+      .club-header {
         text-align: center;
-        font-size: 13px;
+        margin: 20px 0 30px;
+        display: none;
+      }
+      .club-header h1 {
+        font-size: 38px;
+        font-weight: 900;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
       }
 
+      /* Data Table Premium */
+      .data-container {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 500px;
+        margin-bottom: 30px;
+      }
+
+      .table-wrapper { 
+        width: 100%; 
+        overflow: auto; 
+        flex: 1;
+        border-radius: 24px;
+      }
+      table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1000px; }
+      
       th {
-        background: var(--bg-accent);
-        color: var(--muted);
-        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #f8fafc !important;
+        padding: 16px 20px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--text-muted);
+        border-bottom: 2px solid var(--primary);
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       }
 
-      td:first-child,
-      th:first-child {
-        text-align: right;
+      td {
+        padding: 14px 20px;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+        font-size: 13.5px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .sticky-col {
         position: sticky;
         right: 0;
-        background: #fff;
-        z-index: 1;
+        background: #fff !important;
+        z-index: 10;
+        box-shadow: -4px 0 10px rgba(0,0,0,0.02);
+        text-align: right;
       }
 
-      .unit-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        align-items: flex-start;
+      th.sticky-col {
+        z-index: 110;
+        top: 0;
       }
 
-      .unit-title {
-        font-weight: 600;
-        color: var(--ink);
-        font-size: 14px;
-      }
-
-      .unit-sub {
-        font-size: 12px;
-        color: var(--muted);
-      }
-
-      .chip {
+      /* Status Chips Modern */
+      .status {
+        padding: 5px 12px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 800;
         display: inline-flex;
         align-items: center;
+        gap: 6px;
+      }
+      .st-AVAILABLE { background: #d1fae5; color: #065f46; }
+      .st-OCCUPIED { background: #fee2e2; color: #991b1b; }
+      .st-RESERVED { background: #fef3c7; color: #92400e; }
+      .st-LOTTERY_PENDING { background: #fef2f2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+      .st-LOTTERY_CONFIRMED { background: #e8f5e9; color: #1b5e20; border: 1.5px solid #a5d6a7; }
+      .st-ALLOCATED { background: #e0f2fe; color: #075985; }
+      .st-MAINTENANCE { background: #f3e8ff; color: #6b21a8; }
+      .st-COMMANDER { background: #f5d0fe; color: #86198f; } /* Purple */
+      .st-COMPANY { background: #ffedd5; color: #c2410c; }
+      .st-ADMINISTRATIVE { background: #e0f2fe; color: #0369a1; }
+      .st-PERMANENT { background: #dcfce7; color: #166534; }
+      .st-HOSPITALITY { background: #ffedd5; color: #9a3412; } /* Orange/Brown */
+
+      /* Modal Settings */
+      .modal {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(8px);
+        display: none;
         justify-content: center;
-        padding: 6px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        color: var(--chip-text);
-        border: 1px solid transparent;
-        white-space: nowrap;
+        align-items: center;
+        z-index: 2000;
+      }
+      .modal-content {
+        background: white;
+        padding: 32px;
+        border-radius: 24px;
+        width: 450px;
+        max-width: 90%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+      #bookingDetailsModal .modal-content {
+        width: 950px;
+        max-width: 95%;
+        position: relative;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+      }
+      @media (max-width: 768px) {
+        .modal-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+        #bookingDetailsModal .modal-content { padding: 20px !important; }
+      }
+      .modal-content h2 { margin-bottom: 20px; font-size: 20px; }
+      .settings-list { display: flex; flex-direction: column; gap: 15px; }
+      .setting-item { display: flex; align-items: center; gap: 12px; font-weight: 600; cursor: pointer; }
+      .setting-item input { width: 18px; height: 18px; cursor: pointer; }
+
+      /* Loading State */
+      .loading-bar {
+        position: fixed; top: 0; left: 0; height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        z-index: 3000; width: 0; transition: width 0.3s;
       }
 
-      .chip.AVAILABLE {
-        background: var(--chip-available);
-        border-color: #bfe5d1;
-      }
-
-      .chip.OCCUPIED {
-        background: var(--chip-occupied);
-        border-color: #f0b7bd;
-      }
-
-      .chip.RESERVED {
-        background: var(--chip-reserved);
-        border-color: #f4d37b;
-      }
-
-      .chip.LOTTERY_PENDING {
-        background: var(--chip-lottery);
-        border-color: #aab9ff;
-      }
-
-      .chip.MAINTENANCE {
-        background: var(--chip-maintenance);
-        border-color: #d0b4ff;
-      }
-
-      .chip.NOT_BOOKABLE {
-        background: var(--chip-notbookable);
-        border-color: #c9c9c9;
-      }
-
-      .error {
-        background: #fff2f2;
-        color: #a11a1a;
-        border: 1px solid #f3b1b1;
-        padding: 10px 12px;
-        border-radius: 10px;
-        margin-bottom: 16px;
-      }
-
-      .empty-state {
-        background: #fff;
-        border: 1px dashed var(--border);
-        border-radius: 14px;
-        padding: 18px;
-        text-align: center;
-        color: var(--muted);
-      }
-
-      @media (max-width: 720px) {
-        .page {
-          padding: 16px 12px 32px;
-        }
-
-        h1 {
-          font-size: 22px;
-        }
+      .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
       }
     </style>
   </head>
   <body>
-    <div class="page">
-      <header>
-        <h1>لوحة المتابعة اليومية</h1>
-        <div class="subtitle">
-          تحديث تلقائي كل 10 ثوانٍ مع عرض حالة الوحدات حسب الأيام المختارة.
-        </div>
-      </header>
+    <div class="loading-bar" id="loadingBar"></div>
 
-      <div class="filters">
-        <div class="field">
-          <label for="filter-date">التاريخ (DD-MM-YYYY)</label>
-          <input id="filter-date" type="text" placeholder="01-06-2026" />
+    <div class="container">
+      <!-- Navbar -->
+      <nav class="navbar animate-fade">
+        <div class="brand">
+          <img src="{% static 'img/logo_premium.png' %}" alt="Logo">
+          <span>إدارة الإسكان</span>
         </div>
-        <div class="field">
-          <label for="filter-days">عدد الأيام</label>
-          <select id="filter-days">
-            <option value="1">يوم واحد</option>
-            <option value="7" selected>أسبوع</option>
-            <option value="14">أسبوعين</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-club">النادي</label>
-          <select id="filter-club">
-            <option value="">الكل</option>
-            {% for club in clubs %}
-            <option value="{{ club.id }}">{{ club.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-building">المبنى</label>
-          <select id="filter-building">
-            <option value="">الكل</option>
-            {% for building in buildings %}
-            <option value="{{ building.id }}">
-              {{ building.name }} - {{ building.club.name }}
-            </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-floor">الدور</label>
-          <select id="filter-floor">
-            <option value="">الكل</option>
-            {% for floor in floors %}
-            <option value="{{ floor.id }}">
-              {{ floor.label|default:"دور" }} {{ floor.level_number }} -
-              {{ floor.building.name }}
-            </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-status">الحالة</label>
-          <select id="filter-status">
-            <option value="">الكل</option>
-            <option value="AVAILABLE">متاح</option>
-            <option value="OCCUPIED">مشغول</option>
-            <option value="RESERVED">محجوز</option>
-            <option value="LOTTERY_PENDING">قرعة – منتظر السداد</option>
-            <option value="MAINTENANCE">تحت الصيانة</option>
-            <option value="NOT_BOOKABLE">غير قابل للحجز</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-booking-type">نوع الحجز</label>
-          <select id="filter-booking-type">
-            <option value="">الكل</option>
-            <option value="STANDARD">حجز عادي</option>
-            <option value="LOTTERY">قرعة</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="filter-capacity">السعة (حد أدنى)</label>
-          <input id="filter-capacity" type="number" min="1" />
-        </div>
-        <div class="field">
-          <label for="filter-orientation">الاتجاه</label>
-          <select id="filter-orientation">
-            <option value="">الكل</option>
-            <option value="BAHARI">بحري</option>
-            <option value="QIBLI">قبلي</option>
-            <option value="SEA_VIEW">إطلالة بحر</option>
-            <option value="BACK_VIEW">إطلالة خلفية</option>
-          </select>
-        </div>
-        <div class="actions">
-          <button id="apply-btn" class="btn" type="button">تطبيق</button>
-          <button id="reset-btn" class="btn secondary" type="button">
-            إعادة ضبط
+        <div class="nav-actions">
+          <a href="/admin/" class="btn btn-primary" style="background: linear-gradient(135deg, #dc3545, #ef4444); box-shadow: 0 8px 12px -3px rgba(220, 53, 69, 0.2);" title="الرئيسية">
+              <i class="fas fa-home"></i> الرئيسية
+          </a>
+          <a href="/admin/members/member/" class="btn btn-glass" title="إدارة الأعضاء">
+              <i class="fas fa-users"></i> الأعضاء
+          </a>
+          <a href="/admin/reports/dailybookingreport/" class="btn btn-glass" title="تقرير حجوزات عن يوم">
+              <i class="fas fa-calendar-day"></i> تقرير الحجوزات
+          </a>
+          <a href="/dashboard/vacancies/" class="btn btn-glass" title="تقرير المتاح">
+              <i class="fas fa-file-alt"></i> تقرير الخلوات
+          </a>
+          <a href="/dashboard/fax/" class="btn btn-glass" title="إرسال الفاكسات">
+              <i class="fas fa-file-invoice"></i> مولد الفاكسات
+          </a>
+          <button class="btn btn-glass btn-icon" onclick="openSettings()" title="إعدادات العرض">
+            <i class="fas fa-cog"></i>
           </button>
+          <a href="/admin/bookings/booking/add/" class="btn btn-primary">
+            <i class="fas fa-plus"></i> حجز جديد
+          </a>
         </div>
+      </nav>
+
+      <!-- KPI Widgets -->
+      <section class="kpi-grid animate-fade" style="animation-delay: 0.1s">
+        <div class="kpi-card blue" style="cursor: pointer;" onclick="document.getElementById('statusFilter').value=''; loadWallboard();">
+            <i class="fas fa-building icon"></i>
+            <h3>إجمالي الوحدات</h3>
+            <div class="value" id="kpi-total">--</div>
+        </div>
+        <div class="kpi-card emerald" style="cursor: pointer;" onclick="document.getElementById('statusFilter').value='AVAILABLE'; loadWallboard();">
+            <i class="fas fa-check-circle icon"></i>
+            <h3>المتاح</h3>
+            <div class="value" id="kpi-available">--</div>
+        </div>
+        <div class="kpi-card rose" style="cursor: pointer;" onclick="document.getElementById('statusFilter').value='OCCUPIED'; loadWallboard();">
+            <i class="fas fa-user-check icon"></i>
+            <h3>المشغول</h3>
+            <div class="value" id="kpi-occupied">--</div>
+        </div>
+
+        <div class="kpi-card purple" style="padding: 20px 24px;">
+            <i class="fas fa-ticket-alt icon"></i>
+            <h3 id="kpi-lottery-title" style="cursor: pointer;" onclick="document.getElementById('statusFilter').value='LOTTERY_ALL'; loadWallboard();">القرعة</h3>
+            <div class="value" id="kpi-lottery" style="font-size: 36px; margin-bottom: 4px; cursor: pointer;" onclick="document.getElementById('statusFilter').value='LOTTERY_ALL'; loadWallboard();">--</div>
+            <div id="kpi-lottery-details" style="display: flex; gap: 16px; align-items: center; font-size: 13px; font-weight: 700;">
+              <span style="display: flex; align-items: center; gap: 5px; color: #3730a3; cursor: pointer;" onclick="document.getElementById('statusFilter').value='LOTTERY_CONFIRMED'; loadWallboard();">
+                <i class="fas fa-check-circle" style="font-size: 11px;"></i>
+                مؤكد (مدفوع): <span id="kpi-lottery-confirmed" style="font-size: 16px;">--</span>
+              </span>
+              <span style="width: 1px; height: 18px; background: #cbd5e1;"></span>
+              <span style="display: flex; align-items: center; gap: 5px; color: #b91c1c; cursor: pointer;" onclick="document.getElementById('statusFilter').value='LOTTERY_PENDING'; loadWallboard();">
+                <i class="fas fa-clock" style="font-size: 11px;"></i>
+                منتظر السداد: <span id="kpi-lottery-pending" style="font-size: 16px;">--</span>
+              </span>
+            </div>
+        </div>
+        <div class="kpi-card blue" style="padding: 20px 24px;">
+            <i class="fas fa-user-shield icon"></i>
+            <h3 id="kpi-allocated-title" style="cursor: pointer;" onclick="document.getElementById('statusFilter').value='ALLOCATED_ALL'; loadWallboard();">المخصصات</h3>
+            <div class="value" id="kpi-allocated" style="font-size: 36px; margin-bottom: 4px; cursor: pointer;" onclick="document.getElementById('statusFilter').value='ALLOCATED_ALL'; loadWallboard();">--</div>
+            <div id="kpi-allocated-details" style="display: flex; gap: 16px; align-items: center; font-size: 13px; font-weight: 700;">
+              <span style="display: flex; align-items: center; gap: 5px; color: var(--status-available); cursor: pointer;" onclick="document.getElementById('statusFilter').value='ALLOCATED_FREE'; loadWallboard();">
+                <i class="fas fa-door-open" style="font-size: 11px;"></i>
+                متاح: <span id="kpi-alloc-free" style="font-size: 16px;">--</span>
+              </span>
+              <span style="width: 1px; height: 18px; background: #cbd5e1;"></span>
+              <span style="display: flex; align-items: center; gap: 5px; color: var(--status-occupied); cursor: pointer;" onclick="document.getElementById('statusFilter').value='ALLOCATED_BUSY'; loadWallboard();">
+                <i class="fas fa-user-check" style="font-size: 11px;"></i>
+                مشغول: <span id="kpi-alloc-busy" style="font-size: 16px;">--</span>
+              </span>
+            </div>
+        </div>
+      </section>
+
+      <!-- Search Filters -->
+      <section class="filters-box animate-fade" style="animation-delay: 0.15s">
+        <div class="filter-grid">
+          <div class="input-group">
+            <label>الأسبوع / الفوج</label>
+            <select id="weekFilter" onchange="applyWeek(this.value)">
+              <option value="">-- اختر الفوج --</option>
+              {% for p in periods %}
+              <option value='{"start":"{{ p.start_date|date:"d-m-Y" }}", "end":"{{ p.end_date|date:"d-m-Y" }}"}'>{{ p.name }} ({{ p.start_date|date:"d-m" }} : {{ p.end_date|date:"d-m" }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label>التاريخ من</label>
+            <input type="text" id="startDate" placeholder="DD-MM-YYYY">
+          </div>
+          <div class="input-group">
+            <label>التاريخ إلى</label>
+            <input type="text" id="endDate" placeholder="DD-MM-YYYY">
+          </div>
+          <div class="input-group">
+            <label>النادي</label>
+            <select id="clubFilter">
+              <option value="">كل النوادي</option>
+              {% for club in clubs %}
+              <option value="{{ club.id }}">{{ club.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group" id="col-building-filter">
+            <label>المبنى / الفندق</label>
+            <select id="buildingFilter">
+              <option value="">كل المباني</option>
+              {% for b in buildings %}
+              <option value="{{ b.id }}" data-club="{{ b.club.id }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group" id="col-class-filter">
+            <label>التصنيف</label>
+            <select id="classFilter">
+              <option value="">الكل</option>
+              {% for c in classifications %}
+              <option value="{{ c }}">{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+             <label>نوع الوحدة</label>
+             <select id="unitTypeFilter">
+                <option value="">الكل</option>
+                {% for k, v in unit_types %}
+                <option value="{{ k }}">{{ v }}</option>
+                {% endfor %}
+             </select>
+          </div>
+          <div class="input-group">
+             <label>الدور</label>
+             <select id="floorFilter">
+                <option value="">الكل</option>
+                {% for f in floors %}
+                <option value="{{ f.id }}">{{ f.label|default:f.level_number }} ({{ f.building.name }})</option>
+                {% endfor %}
+             </select>
+          </div>
+          <div class="input-group">
+             <label>المخصصات</label>
+             <select id="allocationFilter">
+                <option value="">الكل</option>
+                {% for k, v in allocations %}
+                <option value="{{ k }}">{{ v }}</option>
+                {% endfor %}
+             </select>
+          </div>
+          <div class="input-group">
+             <label>الجيوش والمناطق</label>
+             <select id="armyRegionFilter">
+                <option value="">الكل</option>
+                {% for region in armies_regions %}
+                <option value="{{ region }}">{{ region }}</option>
+                {% endfor %}
+             </select>
+          </div>
+          <div class="input-group" id="col-status-filter">
+            <label>الحالة</label>
+            <select id="statusFilter" onchange="loadWallboard()">
+              <option value="">الكل</option>
+              <option value="AVAILABLE">متاح</option>
+              <option value="OCCUPIED">مشغول</option>
+              <option value="RESERVED">محجوز</option>
+              <option value="ALLOCATED">مخصصات (عام)</option>
+              <option value="ALLOCATED_ALL">مخصصات (الكل)</option>
+              <option value="ALLOCATED_FREE">مخصصات (متاح)</option>
+              <option value="ALLOCATED_BUSY">مخصصات (مشغول)</option>
+              <option value="LOTTERY_ALL">قرعة (الكل)</option>
+              <option value="LOTTERY_CONFIRMED">قرعة مؤكدة (مدفوعة)</option>
+              <option value="LOTTERY_PENDING">قرعة غير مؤكدة (منتظر)</option>
+            </select>
+          </div>
+          <div class="input-group" id="col-rank-filter">
+             <label>الرتبة / الجهة</label>
+             <select id="rankFilter">
+                <option value="">الكل</option>
+                {% for pt_val, pt_label in person_types %}
+                <option value="{{ pt_val }}">{{ pt_label }}</option>
+                {% endfor %}
+             </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 15px; gap: 25px;">
+           <div style="display: flex; align-items: center; gap: 10px;">
+              <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                 <input type="checkbox" id="shortenNamesToggle" onchange="if(currentData) renderData(currentData, document.getElementById('clubFilter').value)" style="opacity: 0; width: 0; height: 0;">
+                 <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></span>
+              </label>
+              <span style="font-weight: 800; color: var(--primary); font-size: 14px;">اسم ثلاثي</span>
+           </div>
+           <div style="display: flex; align-items: center; gap: 10px;">
+              <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                 <input type="checkbox" id="showAllocationNamesToggle" onchange="if(currentData) renderData(currentData, document.getElementById('clubFilter').value)" style="opacity: 0; width: 0; height: 0;">
+                 <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></span>
+              </label>
+              <span style="font-weight: 800; color: var(--primary); font-size: 14px;">إظهار أسماء المخصصات</span>
+           </div>
+           <div style="display: flex; align-items: center; gap: 10px;">
+              <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                 <input type="checkbox" id="showGuestNamesToggle" onchange="if(currentData) renderData(currentData, document.getElementById('clubFilter').value)" style="opacity: 0; width: 0; height: 0;">
+                 <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></span>
+              </label>
+              <style>
+                 .slider { background-color: #94a3b8; }
+                 .slider:before { position: absolute; content: ""; height: 18px; width: 18px; right: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+                 .switch input:checked + .slider { background-color: #ef4444; }
+                 .switch input:checked + .slider:before { transform: translateX(-24px); }
+              </style>
+              <span style="font-weight: 800; color: var(--primary); font-size: 14px;">إظهار أسماء الحاجزين</span>
+           </div>
+           <div style="display: flex; gap: 12px;">
+              <button class="btn btn-glass" onclick="resetFilters()">إعادة تعيين</button>
+              <button class="btn btn-primary" onclick="loadWallboard()">تطبيق الفلاتر</button>
+           </div>
+        </div>
+      </section>
+
+      <!-- Club Title Header -->
+      <div id="clubHeader" class="club-header">
+        <h1 id="selectedClubName">بورسعيد</h1>
       </div>
 
-      <div id="error" class="error" hidden></div>
+      <!-- Main Table -->
+      <section class="data-container animate-fade" style="animation-delay: 0.2s">
+        <div class="table-wrapper">
+          <table id="wallboardTable">
+            <thead>
+              <tr id="tableHead">
+                <th class="sticky-col">الوحدة</th>
+                <!-- Dates will be injected here -->
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Data rows injected here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
-      <div id="summary" class="summary" hidden></div>
+    <!-- Modals -->
+    <div id="bookingDetailsModal" class="modal">
+      <div class="modal-content" style="max-height: 90vh; overflow-y: auto; position: relative;">
+        <!-- Close button at the top-left (for RTL layout) -->
+        <button onclick="document.getElementById('bookingDetailsModal').style.display='none'" style="position: absolute; top: 25px; left: 25px; background: rgba(0,0,0,0.05); border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(244,63,94,0.1)'; this.style.color='var(--accent)'" onmouseout="this.style.background='rgba(0,0,0,0.05)'; this.style.color='var(--text-muted)'">
+          <i class="fas fa-times"></i>
+        </button>
+        
+        <!-- Modal Dynamic Header -->
+        <div id="modalUnitHeader" style="border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 25px; padding-left: 45px;">
+          <!-- Injected dynamically in JS -->
+        </div>
 
-      <div id="table-wrap" class="table-wrap" hidden>
-        <table>
-          <thead id="table-head"></thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
+        <!-- Two Column Grid for Desktop/Responsive -->
+        <div class="modal-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px;">
+          
+          <!-- Column 1: Selected Booking Details -->
+          <div style="display: flex; flex-direction: column; gap: 15px;">
+            <h3 style="font-size: 16px; color: var(--text-muted); font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+              <i class="fas fa-info-circle" style="color: var(--primary);"></i> تفاصيل الحجز الحالي
+            </h3>
+            <div id="bookingDetailsContent" style="display: flex; flex-direction: column; gap: 15px;">
+              <!-- Injected dynamically in JS -->
+            </div>
+          </div>
 
-      <div id="empty-state" class="empty-state" hidden>
-        لا توجد بيانات مطابقة للفلاتر الحالية.
+          <!-- Column 2: Other/Future Bookings Timeline -->
+          <div style="border-right: 1.5px solid #f1f5f9; padding-right: 30px; display: flex; flex-direction: column; gap: 15px;">
+            <h3 style="font-size: 16px; color: var(--text-muted); font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+              <i class="fas fa-history" style="color: var(--secondary);"></i> سجل وحجوزات الغرفة
+            </h3>
+            <div id="otherBookingsContainer">
+                <button class="btn" id="btnShowOtherBookings" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #f8fafc, #f1f5f9); color: var(--text); border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: 48px; border-radius: 14px;">
+                    <i class="fas fa-list"></i> إظهار كافة الحجوزات الأخرى للوحدة
+                </button>
+                <div id="otherBookingsList" style="margin-top: 15px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-left: 5px;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 30px; border-top: 1.5px solid #f1f5f9; padding-top: 20px; display: flex; justify-content: flex-end;">
+          <button class="btn btn-glass" style="height: 42px; width: 120px; justify-content: center; border-radius: 12px;" onclick="document.getElementById('bookingDetailsModal').style.display='none'">إغلاق</button>
+        </div>
       </div>
     </div>
 
-    <script src="{% static 'dashboard/wallboard.js' %}" defer></script>
+    <div id="settingsModal" class="modal">
+      <div class="modal-content">
+        <h2>إعدادات عرض لوحة المتابعة</h2>
+        <div class="settings-list">
+          <label class="setting-item">
+            <input type="checkbox" checked onchange="toggleCol(this, 'col-building-filter')"> عرض فلتر المباني
+          </label>
+          <label class="setting-item">
+            <input type="checkbox" checked onchange="toggleCol(this, 'col-class-filter')"> عرض فلتر التصنيف
+          </label>
+          <label class="setting-item">
+            <input type="checkbox" checked onchange="toggleCol(this, 'col-status-filter')"> عرض فلتر الحالة
+          </label>
+          <label class="setting-item">
+            <input type="checkbox" checked onchange="toggleCol(this, 'col-rank-filter')"> عرض فلتر الرتبة
+          </label>
+          <label class="setting-item">
+            <input type="checkbox" checked id="showClubInLabel"> إظهار اسم النادي بجانب الوحدة (عند عرض الكل)
+          </label>
+        </div>
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+          <button class="btn btn-primary" onclick="closeSettings()">حفظ وإغلاق</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentData = null;
+      const unitsMetadata = JSON.parse('{{ units_metadata_json|escapejs }}');
+
+      function applyWeek(val) {
+        if (!val) return;
+        try {
+            const data = JSON.parse(val);
+            document.getElementById('startDate').value = data.start;
+            document.getElementById('endDate').value = data.end;
+            loadWallboard();
+        } catch(e) {
+            const [start, end] = val.split('|');
+            document.getElementById('startDate').value = start;
+            document.getElementById('endDate').value = end;
+            loadWallboard();
+        }
+      }
+
+      function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
+      function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+      
+      function toggleCol(el, id) {
+        const item = document.getElementById(id);
+        if (el.checked) item.classList.remove('hidden');
+        else item.classList.add('hidden');
+      }
+
+      function resetFilters() {
+         const t = new Date();
+         const dateStr = `${String(t.getDate()).padStart(2, '0')}-${String(t.getMonth()+1).padStart(2, '0')}-${t.getFullYear()}`;
+         document.getElementById('startDate').value = dateStr;
+         document.getElementById('endDate').value = "";
+         document.getElementById('weekFilter').value = "";
+         document.getElementById('clubFilter').value = "";
+         document.getElementById('buildingFilter').value = "";
+         document.getElementById('classFilter').value = "";
+         document.getElementById('unitTypeFilter').value = "";
+         document.getElementById('floorFilter').value = "";
+         document.getElementById('allocationFilter').value = "";
+         loadWallboard();
+      }
+
+      async function loadWallboard() {
+        const barVisible = document.getElementById('loadingBar');
+        barVisible.style.width = '30%';
+        
+        const params = new URLSearchParams();
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const club = document.getElementById('clubFilter').value;
+        const building = document.getElementById('buildingFilter').value;
+        const cls = document.getElementById('classFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const rank = document.getElementById('rankFilter').value;
+        const floor = document.getElementById('floorFilter').value;
+        const alloc = document.getElementById('allocationFilter').value;
+        const armyRegion = document.getElementById('armyRegionFilter').value;
+        const unitType = document.getElementById('unitTypeFilter').value;
+
+        if (start) params.append('date', start);
+        if (end) params.append('end_date', end);
+        if (club) params.append('club', club);
+        if (building) params.append('building', building);
+        if (cls) params.append('classification', cls);
+        if (status) params.append('status', status);
+        if (rank) params.append('guest_rank', rank);
+        if (unitType) params.append('unit_type', unitType);
+        if (floor) params.append('floor', floor);
+        if (alloc) params.append('allocation', alloc);
+        if (armyRegion) params.append('army_region', armyRegion);
+        params.append('_t', new Date().getTime());
+
+        try {
+          const res = await fetch(`/api/dashboard/wallboard/?${params}`);
+          const data = await res.json();
+          currentData = data;
+          barVisible.style.width = '70%';
+          
+          handleClubHeader(club);
+          renderData(data, club);
+          updateKPIs(data);
+          
+          barVisible.style.width = '100%';
+          setTimeout(() => barVisible.style.width = '0', 400);
+        } catch (e) {
+          console.error(e);
+          barVisible.style.width = '0';
+        }
+      }
+
+      function handleClubHeader(clubId) {
+        const header = document.getElementById('clubHeader');
+        const nameEl = document.getElementById('selectedClubName');
+        const clubSelect = document.getElementById('clubFilter');
+        
+        if (clubId) {
+          const clubName = clubSelect.options[clubSelect.selectedIndex].text;
+          nameEl.textContent = clubName;
+          header.style.display = 'block';
+        } else {
+          header.style.display = 'none';
+        }
+      }
+
+      function renderData(data, isFilteredByClub) {
+        const head = document.getElementById('tableHead');
+        const body = document.getElementById('tableBody');
+        const showClub = document.getElementById('showClubInLabel').checked;
+        
+        let headHtml = '<th class="sticky-col">الوحدة</th>';
+        data.dates.forEach(d => {
+          headHtml += `<th>${d}</th>`;
+        });
+        head.innerHTML = headHtml;
+
+        let bodyHtml = '';
+        data.units.forEach(u => {
+          const clubTag = (!isFilteredByClub && showClub) ? `<span style="font-size: 10px; opacity: 0.7; font-weight: normal;"> / ${u.club_name}</span>` : '';
+          const showGuestNames = document.getElementById('showGuestNamesToggle') ? document.getElementById('showGuestNamesToggle').checked : false;
+          const showAllocationNames = document.getElementById('showAllocationNamesToggle') ? document.getElementById('showAllocationNamesToggle').checked : false;
+          const shortenNames = document.getElementById('shortenNamesToggle') ? document.getElementById('shortenNamesToggle').checked : false;
+          const futureBadge = u.future_bookings_count > 0 ? 
+            `<div style="display:inline-block; background:var(--accent); color:white; border-radius:50%; width:18px; height:18px; line-height:18px; font-size:11px; text-align:center; position:absolute; right: -10px; top: -5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);" title="حجوزات مستقبلية: ${u.future_bookings_count}">${u.future_bookings_count}</div>` : '';
+          
+          bodyHtml += `<tr>`;
+          bodyHtml += `<td class="sticky-col">
+            <div style="font-weight: 800; color: var(--primary); position: relative; display: inline-block;">
+                ${futureBadge} ${u.unit_type_label} ${u.unit_no}${clubTag}
+            </div>
+            <div style="font-size: 10px; color: var(--text-muted); opacity: 0.8; margin-top: 4px;">
+                ${u.building} | ${u.classification || '---'}
+            </div>
+          </td>`;
+          
+          u.statuses.forEach(st => {
+            let className = st.status;
+            let displayLabel = st.label;
+            
+            if (st.status === 'ALLOCATED') {
+               className = u.allocation || 'ALLOCATED';
+               displayLabel = u.allocation_label || st.label;
+            } else if (st.booking_id && u.allocation) {
+               className = u.allocation;
+               displayLabel = u.allocation_label;
+            }
+            
+            let isGuestNameDisplayed = false;
+            
+            if (showAllocationNames && u.allocation && u.allocation_guest) {
+               let aName = u.allocation_guest;
+               if (shortenNames) {
+                  aName = aName.split(' ').slice(0, 3).join(' ');
+               }
+               displayLabel = aName;
+               isGuestNameDisplayed = true;
+            }
+            
+            if (showGuestNames && st.booking_id) {
+               let gName = st.booking_guest || st.booking_type || displayLabel;
+               if (shortenNames && st.booking_guest) {
+                  gName = gName.split(' ').slice(0, 3).join(' ');
+               }
+               displayLabel = gName;
+               isGuestNameDisplayed = true;
+            }
+            
+            let clickHandler = `onclick="showBookingDetails('${encodeURIComponent(JSON.stringify(st))}', '${u.id}')" style="cursor:pointer;"`;
+
+            let contentHtml = displayLabel;
+            
+            if (isGuestNameDisplayed) {
+               contentHtml = `<span style="color: #ef4444; font-weight: 900; font-size: 14px; text-shadow: 0px 1px 2px rgba(255,255,255,0.8);">${displayLabel}</span>`;
+            } else if (!showGuestNames && st.booking_id) {
+               if (st.booking_type === 'LOTTERY') {
+                  const guestNameShort = st.booking_guest ? st.booking_guest.split(' ').slice(0, 2).join(' ') : 'فائز بالقرعة';
+                  contentHtml = `<div style="font-weight: bold;">${displayLabel}</div>`;
+                  contentHtml += `<div style="font-size: 10px; font-weight: bold; margin-top: 4px; color: #1e293b;">${guestNameShort}</div>`;
+                  if (st.booking_status === 'غير مؤكد') {
+                     if (st.payment_deadline) {
+                        contentHtml += `<div style="font-size: 9px; color: #dc2626; font-weight: 900; margin-top: 4px;"><i class="fas fa-exclamation-triangle"></i> مهلة: ${st.payment_deadline}</div>`;
+                     } else {
+                        contentHtml += `<div style="font-size: 9px; color: #b45309; font-weight: bold; margin-top: 4px;"><i class="fas fa-clock"></i> منتظر السداد</div>`;
+                     }
+                  } else {
+                     contentHtml += `<div style="font-size: 9px; color: #1b5e20; font-weight: bold; margin-top: 4px;"><i class="fas fa-check-circle"></i> تم السداد</div>`;
+                  }
+               } else if (u.allocation) {
+                  contentHtml += `<br><span style="background: var(--status-occupied); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; display: inline-block; margin-top: 5px;">مشغول</span>`;
+               }
+            }
+
+            bodyHtml += `<td ${clickHandler}><span class="status st-${className}" style="flex-direction: column; text-align: center; white-space: normal; line-height: 1.2; padding: 6px 12px;">${contentHtml}</span></td>`;
+          });
+          bodyHtml += `</tr>`;
+        });
+        body.innerHTML = bodyHtml;
+      }
+
+      function updateKPIs(data) {
+          // Use backend KPIs that reflect the actual totals before filters
+          const kpis = data.kpis || {
+             total: data.units.length,
+             available: 0,
+             occupied: 0,
+             reserved: 0,
+             alloc_total: 0,
+             alloc_free: 0,
+             alloc_busy: 0
+          };
+
+          // Use the backend lottery summary
+          const lSummary = data.lottery_summary || { total: 0, confirmed: 0, pending: 0 };
+
+          document.getElementById('kpi-total').textContent = kpis.total;
+          document.getElementById('kpi-available').textContent = kpis.available;
+          document.getElementById('kpi-occupied').textContent = kpis.occupied;
+          document.getElementById('kpi-lottery').textContent = lSummary.total;
+          document.getElementById('kpi-lottery-confirmed').textContent = lSummary.confirmed;
+          document.getElementById('kpi-lottery-pending').textContent = lSummary.pending;
+          document.getElementById('kpi-allocated').textContent = kpis.alloc_total;
+          document.getElementById('kpi-alloc-free').textContent = kpis.alloc_free;
+          document.getElementById('kpi-alloc-busy').textContent = kpis.alloc_busy;
+          
+          const allocSelect = document.getElementById('statusFilter');
+          const allocTitle = document.getElementById('kpi-allocated-title');
+          if (allocSelect.value && allocSelect.value.startsWith('ALLOCATED_')) {
+             allocTitle.textContent = allocSelect.options[allocSelect.selectedIndex].text;
+          } else {
+             allocTitle.textContent = "المخصصات";
+          }
+
+          const lotteryTitle = document.getElementById('kpi-lottery-title');
+          if (allocSelect.value && allocSelect.value.startsWith('LOTTERY_')) {
+             lotteryTitle.textContent = allocSelect.options[allocSelect.selectedIndex].text;
+          } else {
+             lotteryTitle.textContent = "القرعة";
+          }
+      }
+
+      function updateCascadingFilters() {
+          const clubId = document.getElementById('clubFilter').value;
+          const buildSelect = document.getElementById('buildingFilter');
+          const floorSelect = document.getElementById('floorFilter');
+          const classSelect = document.getElementById('classFilter');
+          const unitTypeSelect = document.getElementById('unitTypeFilter');
+          
+          if (!clubId) {
+              buildSelect.innerHTML = '<option value="">-- الكل --</option>';
+              floorSelect.innerHTML = '<option value="">-- الكل --</option>';
+              classSelect.innerHTML = '<option value="">-- الكل --</option>';
+              buildSelect.disabled = true;
+              floorSelect.disabled = true;
+              classSelect.disabled = true;
+              
+              // Reset Unit Type to all original options
+              const allUnitTypeOptions = Array.from(document.querySelectorAll('#unitTypeFilterOriginal option'));
+              unitTypeSelect.innerHTML = '';
+              allUnitTypeOptions.forEach(opt => unitTypeSelect.appendChild(opt.cloneNode(true)));
+              return;
+          }
+
+          // Path 1: Filter Buildings based on Club
+          const buildings = new Set();
+          const unitTypes = new Set();
+          const classes = new Set();
+          
+          unitsMetadata.forEach(m => {
+              if (m.floor__building__club_id == clubId) {
+                  buildings.add(m.floor__building_id);
+                  if (m.unit_type) unitTypes.add(m.unit_type);
+                  if (m.classification) classes.add(m.classification);
+              }
+          });
+
+          const allBuildOptions = Array.from(document.querySelectorAll('#buildingFilterOriginal option'));
+          buildSelect.innerHTML = '<option value="">-- الكل --</option>';
+          allBuildOptions.forEach(opt => {
+              if (buildings.has(parseInt(opt.value))) {
+                  buildSelect.appendChild(opt.cloneNode(true));
+              }
+          });
+          buildSelect.disabled = false;
+          
+          // Path 2: Filter Classifications based on Club
+          classSelect.innerHTML = '<option value="">-- الكل --</option>';
+          Array.from(classes).sort().forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c;
+              opt.textContent = c;
+              classSelect.appendChild(opt);
+          });
+          classSelect.disabled = false;
+
+          // Update Unit Types based on Club
+          const allUnitTypeOptions = Array.from(document.querySelectorAll('#unitTypeFilterOriginal option'));
+          unitTypeSelect.innerHTML = '<option value="">-- الكل --</option>';
+          allUnitTypeOptions.forEach(opt => {
+              if (unitTypes.has(opt.value)) {
+                  unitTypeSelect.appendChild(opt.cloneNode(true));
+              }
+          });
+
+          // Reset Floor
+          floorSelect.innerHTML = '<option value="">-- الكل --</option>';
+          floorSelect.disabled = true;
+      }
+
+      function updateFloorFilter() {
+          const clubId = document.getElementById('clubFilter').value;
+          const buildId = document.getElementById('buildingFilter').value;
+          const floorSelect = document.getElementById('floorFilter');
+          const unitTypeSelect = document.getElementById('unitTypeFilter');
+          
+          if (!buildId) {
+              floorSelect.innerHTML = '<option value="">-- الكل --</option>';
+              floorSelect.disabled = true;
+              // Re-filter Unit Type based on Club only
+              updateCascadingFilters(); 
+              return;
+          }
+
+          const floors = new Set();
+          const unitTypes = new Set();
+          unitsMetadata.forEach(m => {
+              if (m.floor__building_id == buildId) {
+                  floors.add(m.floor_id);
+                  if (m.unit_type) unitTypes.add(m.unit_type);
+              }
+          });
+
+          const allFloorOptions = Array.from(document.querySelectorAll('#floorFilterOriginal option'));
+          floorSelect.innerHTML = '<option value="">-- الكل --</option>';
+          allFloorOptions.forEach(opt => {
+              if (floors.has(parseInt(opt.value))) {
+                  floorSelect.appendChild(opt.cloneNode(true));
+              }
+          });
+          floorSelect.disabled = false;
+
+          // Update Unit Types based on Building
+          const allUnitTypeOptions = Array.from(document.querySelectorAll('#unitTypeFilterOriginal option'));
+          unitTypeSelect.innerHTML = '<option value="">-- الكل --</option>';
+          allUnitTypeOptions.forEach(opt => {
+              if (unitTypes.has(opt.value)) {
+                  unitTypeSelect.appendChild(opt.cloneNode(true));
+              }
+          });
+      }
+
+      function updateUnitTypeFromFloor() {
+          const buildId = document.getElementById('buildingFilter').value;
+          const floorId = document.getElementById('floorFilter').value;
+          const unitTypeSelect = document.getElementById('unitTypeFilter');
+
+          if (!floorId) {
+              // If no floor selected, defer to building-level filter
+              updateFloorFilter();
+              return;
+          }
+
+          const unitTypes = new Set();
+          unitsMetadata.forEach(m => {
+              if (m.floor_id == floorId) {
+                  if (m.unit_type) unitTypes.add(m.unit_type);
+              }
+          });
+
+          const allUnitTypeOptions = Array.from(document.querySelectorAll('#unitTypeFilterOriginal option'));
+          unitTypeSelect.innerHTML = '<option value="">-- الكل --</option>';
+          allUnitTypeOptions.forEach(opt => {
+              if (unitTypes.has(opt.value)) {
+                  unitTypeSelect.appendChild(opt.cloneNode(true));
+              }
+          });
+      }
+
+      function showBookingDetails(encodedSt, unitId) {
+          try {
+             const st = JSON.parse(decodeURIComponent(encodedSt));
+             const content = document.getElementById('bookingDetailsContent');
+             const otherList = document.getElementById('otherBookingsList');
+             const btnShow = document.getElementById('btnShowOtherBookings');
+             const headerDiv = document.getElementById('modalUnitHeader');
+             
+             otherList.innerHTML = '';
+             
+             // Find unit details from currentData
+             const unit = currentData.units.find(u => u.id == unitId);
+             if (unit) {
+                 headerDiv.innerHTML = `
+                   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                      <div>
+                         <h2 style="margin:0; color:var(--primary); font-size:24px; font-weight:900; display:flex; align-items:center; gap:10px;">
+                            <i class="fas fa-door-open"></i> وحدة ${unit.unit_no}
+                            <span style="font-size:13px; background:#e0f2fe; color:#0369a1; padding:4px 12px; border-radius:20px; font-weight:700;">${unit.club_name}</span>
+                         </h2>
+                         <div style="font-size:13px; color:var(--text-muted); font-weight:700; margin-top:5px; display:flex; gap:15px; align-items:center;">
+                            <span><i class="fas fa-building"></i> ${unit.building}</span>
+                            <span><i class="fas fa-layer-group"></i> ${unit.floor_label || 'الدور ' + unit.floor}</span>
+                         </div>
+                      </div>
+                      <div style="font-size:13px; font-weight:700; background:#f1f5f9; padding:6px 12px; border-radius:10px; color:var(--text-muted);">
+                         <i class="fas fa-cube"></i> تصنيف: ${unit.classification || '---'}
+                      </div>
+                   </div>
+                 `;
+             } else {
+                 headerDiv.innerHTML = `<h2 style="margin:0; color:var(--primary); font-size:22px; font-weight:900;"><i class="fas fa-door-open"></i> تفاصيل الوحدة والحجز</h2>`;
+             }
+             
+             let html = '';
+             if (st.booking_id) {
+                 // Premium details layout for currently active booking
+                 html += `
+                 <div style="background:#fff; border:1px solid #e2e8f0; padding:20px; border-radius:16px; display:flex; flex-direction:column; gap:14px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                    
+                    <!-- Guest Name / Rank Section -->
+                    <div style="display:flex; align-items:center; gap:15px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
+                       <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--secondary)); color:white; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;">
+                          ${st.booking_guest ? st.booking_guest.charAt(0) : 'ح'}
+                       </div>
+                       <div>
+                          <div style="font-size:18px; font-weight:800; color:var(--text);">
+                             ${st.booking_guest || 'حجز مستورد'}
+                          </div>
+                          <div style="font-size:13px; color:var(--text-muted); font-weight:700; margin-top:2px;">
+                             <i class="fas fa-star" style="color:#f59e0b;"></i> ${st.booking_rank || 'بدون رتبة'}
+                          </div>
+                       </div>
+                    </div>
+
+                    <!-- Detailed Fields Grid -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                       <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9;">
+                          <div style="font-size:11px; color:var(--text-muted); font-weight:700;">
+                             ${st.booking_member_no && st.booking_member_no !== '---' ? 'رقم العضوية' : 'التصنيف/الرتبة'}
+                          </div>
+                          <div style="font-size:14px; font-weight:700; color:var(--text); margin-top:3px;">
+                             <i class="far fa-id-card" style="color:var(--primary);"></i> ${st.booking_member_no && st.booking_member_no !== '---' ? st.booking_member_no : (st.booking_rank || 'غير محدد')}
+                          </div>
+                       </div>
+                       <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9;">
+                          <div style="font-size:11px; color:var(--text-muted); font-weight:700;">نوع الحجز</div>
+                          <div style="font-size:14px; font-weight:700; color:var(--text); margin-top:3px;">
+                             <i class="fas fa-tag" style="color:var(--secondary);"></i> ${st.booking_type === 'LOTTERY' ? 'قرعة 2026' : 'حجز عادي'}
+                          </div>
+                       </div>
+                    </div>
+
+                    <!-- Booking Dates Segment -->
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+                       <div>
+                          <div style="font-size:11px; color:#166534; font-weight:700;">تاريخ الوصول</div>
+                          <div style="font-size:14px; font-weight:800; color:#14532d; margin-top:3px;"><i class="far fa-calendar-check"></i> ${st.booking_start}</div>
+                        </div>
+                        <i class="fas fa-long-arrow-alt-left" style="font-size:18px; color:#166534; opacity:0.5;"></i>
+                        <div>
+                           <div style="font-size:11px; color:#166534; font-weight:700; text-align:left;">تاريخ المغادرة</div>
+                           <div style="font-size:14px; font-weight:800; color:#14532d; margin-top:3px; text-align:left;"><i class="far fa-calendar-times"></i> ${st.booking_end}</div>
+                        </div>
+                     </div>
+
+                     <!-- Payment & Status Segment -->
+                     <div style="background:#f8fafc; padding:14px; border-radius:12px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                           <span style="font-size:13px; color:var(--text-muted); font-weight:700;">حالة الدفع والتأكيد:</span>
+                           <strong style="font-size:13px; background:${st.booking_status === 'غير مؤكد' ? '#ef444415' : '#10b98115'}; color: ${st.booking_status === 'غير مؤكد' ? '#ef4444' : '#10b981'}; padding:3px 10px; border-radius:8px; font-weight:800;">${st.booking_status || 'مؤكد'}</strong>
+                        </div>
+                        
+                        ${st.booking_type === 'LOTTERY' ? `
+                           <div style="border-top:1px dashed #e2e8f0; margin-top:8px; padding-top:8px;">
+                              ${st.payment_deadline ? `
+                                 <div style="color: #dc2626; font-weight: 800; font-size:12.5px; display:flex; align-items:center; gap:6px;">
+                                    <i class="fas fa-exclamation-triangle"></i> مهلة السداد النهائية: <strong>${st.payment_deadline}</strong>
+                                 </div>
+                              ` : `
+                                 <div style="color: #64748b; font-style: italic; font-size:12.5px; display:flex; align-items:center; gap:6px;">
+                                    <i class="fas fa-info-circle"></i> مهلة السداد: لم تحدد بعد
+                                 </div>
+                              `}
+                           </div>
+                        ` : ''}
+                     </div>
+
+                 </div>
+                 <div style="margin-top:5px; text-align:center;">
+                    <a href="/admin/bookings/booking/${st.booking_id}/change/" target="_blank" class="btn btn-glass" style="width:100%; justify-content:center; height:40px; font-size:13px; border-radius:12px;">
+                       <i class="fas fa-edit"></i> تعديل تفاصيل الحجز الحالي في لوحة التحكم
+                    </a>
+                 </div>
+                 `;
+             } else {
+                 // Room is vacant / has no booking currently on this day
+                 html += `
+                 <div style="background:#ecfdf5; border:1.5px dashed #a7f3d0; padding:35px 20px; border-radius:16px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; justify-content:center;">
+                    <div style="width:64px; height:64px; border-radius:50%; background:#d1fae5; color:#059669; display:flex; align-items:center; justify-content:center; font-size:26px;">
+                       <i class="fas fa-door-open"></i>
+                    </div>
+                    <div>
+                       <div style="font-size:18px; font-weight:800; color:#065f46;">الغرفة متاحة للحجز</div>
+                       <div style="font-size:13px; color:#047857; margin-top:4px; font-weight:600;">لا توجد أي حجوزات مؤكدة لهذه الغرفة في تاريخ اليوم المختار.</div>
+                    </div>
+                    <a href="/admin/bookings/booking/add/?unit=${unitId}" target="_blank" class="btn btn-primary" style="margin-top:10px; height:40px; justify-content:center; font-size:13px; border-radius:12px; width:100%;">
+                       <i class="fas fa-plus"></i> إجراء حجز سريع للغرفة
+                    </a>
+                 </div>
+                 `;
+             }
+             
+             content.innerHTML = html || '<div>لا توجد تفاصيل للحجز الحالي</div>';
+             
+             btnShow.onclick = async () => {
+                 const startDateVal = document.getElementById('startDate').value;
+                 btnShow.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
+                 btnShow.disabled = true;
+                 try {
+                     const res = await fetch(`/api/dashboard/unit-bookings/?unit_id=${unitId}&date=${startDateVal}`);
+                     const data = await res.json();
+                     if (data.bookings && data.bookings.length > 0) {
+                         otherList.innerHTML = data.bookings.map(b => {
+                             const statusColor = b.status === 'غير مؤكد' ? '#ef4444' : '#10b981';
+                             return `
+                             <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:10px; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                   <div>
+                                      <strong style="color:var(--text); font-size:14px;">${b.guest_name}</strong>
+                                      <span style="font-size:11px; font-weight:700; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px; margin-right:5px;">${b.booking_type}</span>
+                                   </div>
+                                   <span style="font-size:11px; font-weight:700; background:${statusColor}15; color:${statusColor}; padding:2px 8px; border-radius:8px;">${b.status}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-muted); border-top:1px dashed #e2e8f0; padding-top:8px;">
+                                   <div><i class="far fa-id-card"></i> ${b.membership_no && b.membership_no !== '---' ? `عضوية: <strong>${b.membership_no}</strong>` : `التصنيف: <strong>${b.rank || 'مدني'}</strong>`}</div>
+                                   <div><i class="far fa-calendar-alt"></i> من <strong>${b.start_date}</strong> إلى <strong>${b.end_date}</strong></div>
+                                </div>
+                                ${b.phone && b.phone !== '---' ? `<div style="font-size:12px; color:var(--text-muted); margin-top:2px;"><i class="fas fa-phone-alt"></i> تليفون: <strong>${b.phone}</strong></div>` : ''}
+                                ${b.notes ? `<div style="font-size:12px; color:#b45309; background:#fffbeb; padding:6px 10px; border-radius:8px; border:1px solid #fde68a; margin-top:5px;"><i class="far fa-comment-dots"></i> ملاحظات: ${b.notes}</div>` : ''}
+                             </div>
+                             `;
+                         }).join('');
+                     } else {
+                         otherList.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد حجوزات أخرى لهذه الغرفة</div>';
+                     }
+                 } catch(e) {
+                     otherList.innerHTML = '<div style="color:var(--accent); text-align:center; padding:20px;">خطأ في جلب الحجوزات</div>';
+                 }
+                 btnShow.innerHTML = '<i class="fas fa-list"></i> إظهار كافة الحجوزات الأخرى للوحدة';
+                 btnShow.disabled = false;
+             };
+             
+             document.getElementById('bookingDetailsModal').style.display = 'flex';
+          } catch(e) {
+              console.error(e);
+          }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+          const bSelect = document.getElementById('buildingFilter');
+          const fSelect = document.getElementById('floorFilter');
+          const uSelect = document.getElementById('unitTypeFilter');
+          
+          const bOrig = document.createElement('select');
+          bOrig.id = 'buildingFilterOriginal';
+          Array.from(bSelect.options).forEach(o => bOrig.appendChild(o.cloneNode(true)));
+          
+          const fOrig = document.createElement('select');
+          fOrig.id = 'floorFilterOriginal';
+          Array.from(fSelect.options).forEach(o => fOrig.appendChild(o.cloneNode(true)));
+
+          const uOrig = document.createElement('select');
+          uOrig.id = 'unitTypeFilterOriginal';
+          Array.from(uSelect.options).forEach(o => uOrig.appendChild(o.cloneNode(true)));
+          
+          document.body.appendChild(bOrig);
+          document.body.appendChild(fOrig);
+          document.body.appendChild(uOrig);
+          bOrig.style.display = 'none';
+          fOrig.style.display = 'none';
+          uOrig.style.display = 'none';
+
+          resetFilters();
+
+          document.getElementById('clubFilter').addEventListener('change', updateCascadingFilters);
+          document.getElementById('buildingFilter').addEventListener('change', updateFloorFilter);
+          document.getElementById('floorFilter').addEventListener('change', updateUnitTypeFromFloor);
+          
+          bSelect.disabled = true;
+          fSelect.disabled = true;
+          document.getElementById('classFilter').disabled = true;
+      });
+    </script>
   </body>
 </html>

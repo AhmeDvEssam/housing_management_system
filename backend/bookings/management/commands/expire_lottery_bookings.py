@@ -1,24 +1,20 @@
 from django.core.management.base import BaseCommand
-from django.db import transaction
 from django.utils import timezone
-
-from bookings.models import Booking, BookingStatus, BookingType
-
+from bookings.models import Booking
 
 class Command(BaseCommand):
-    help = "إنهاء حجوزات القرعة غير المسددة بعد انتهاء المهلة"
+    help = 'Expires lottery bookings past their payment deadline'
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
         today = timezone.localdate()
-        queryset = Booking.objects.filter(
-            booking_type=BookingType.LOTTERY,
-            status=BookingStatus.PENDING_PAYMENT,
+        expired = Booking.objects.filter(
+            booking_type='LOTTERY',
             payment_deadline__lt=today,
+        ).exclude(
+            status__in=['ملغي', 'مدفوع', 'مؤكد']
         )
-        expired_count = 0
-        with transaction.atomic():
-            for booking in queryset:
-                booking.status = BookingStatus.EXPIRED
-                booking.save()
-                expired_count += 1
-        self.stdout.write(f"تم إنهاء {expired_count} حجز قرعة")
+        count = expired.count()
+        for b in expired:
+            b.status = 'ملغي'
+            b.save()
+        self.stdout.write(self.style.SUCCESS(f'Expired {count} lottery bookings'))

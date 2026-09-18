@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block object-tools-items %}
+    <li>
+        <a href="import-excel/" class="addlink" style="background: linear-gradient(135deg, #10b981, #059669); color: white; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px;">
+            <i class="fas fa-file-excel" style="margin-left: 5px;"></i> استيراد القرعة من إكسل (Excel)
+        </a>
+    </li>
+    {{ block.super }}
+{% endblock %}

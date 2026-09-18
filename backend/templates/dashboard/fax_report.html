@@ -1,0 +1,603 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <title>مولد الفاكسات - {{ selected_club.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/cairo.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <style>
+        :root {
+            --border-color: #000;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            color: #000;
+        }
+
+        /* Container & Grid */
+        .container {
+            max-width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            margin: 0 auto;
+            background: #fff;
+            padding: 8mm 5mm;
+            border: 2px solid #000;
+            outline: 4px solid #000;
+            outline-offset: 4px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Main Header Grid */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+            margin-bottom: 5px;
+        }
+
+        .header-table td {
+            border: 2px solid #000;
+            padding: 5px 10px;
+            vertical-align: top;
+        }
+
+        .header-right-col {
+            width: 30%;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        .header-center-col {
+            width: 40%;
+            text-align: center;
+            font-weight: 900;
+            position: relative;
+        }
+
+        .header-left-col {
+            width: 30%;
+            text-align: right;
+            font-size: 15px;
+            line-height: 1.5;
+            font-weight: 800;
+        }
+
+        /* Top Left Mini Table inside header-right-col */
+        .doc-meta {
+            width: 100%;
+            border: none;
+        }
+        .doc-meta td {
+            border: none !important;
+            padding: 2px 0 !important;
+            font-size: 13px;
+        }
+
+        .logo-img {
+            max-height: 80px;
+            margin-bottom: 5px;
+        }
+
+        /* Content Headings */
+        .report-title-container {
+            text-align: center;
+            margin: 15px 0 10px;
+        }
+        
+        .mulhaq-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            text-decoration: underline;
+        }
+
+        .club-title {
+            font-size: 28px;
+            font-weight: 900;
+            text-decoration: underline;
+        }
+
+        .week-dates {
+            font-size: 20px;
+            font-weight: 800;
+            text-decoration: underline;
+            margin-top: 5px;
+        }
+
+        /* Main Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+            margin-top: 10px;
+        }
+
+        .data-table th, .data-table td {
+            border: 2px solid #000;
+            padding: 3px 2px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .data-table th {
+            background-color: #fff;
+            padding: 8px 4px;
+        }
+
+        .nested-th {
+            padding: 0;
+            border: none;
+        }
+        .nested-th table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .nested-th table th {
+            border: none;
+            border-bottom: 2px solid #000;
+            padding: 4px;
+            text-align: center;
+        }
+        .nested-th table th:first-child { border-bottom: none; }
+        .nested-th table td {
+            border: none;
+            width: 50%;
+            padding: 4px;
+            font-size: 12px;
+        }
+        .nested-th table td:first-child { border-left: 2px solid #000; }
+
+        /* Signatures Section */
+        .signatures {
+            margin-top: 20px;
+            width: 100%;
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .signatures p {
+            margin: 5px 0;
+        }
+
+        .sig-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .sig-col {
+            text-align: right;
+            width: 32%;
+        }
+
+        .sig-col-large {
+            text-align: center;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        /* Note Section */
+        .footer-note {
+            margin-top: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            direction: rtl;
+        }
+        
+        .footer-note ul {
+            list-style-type: none;
+            padding-right: 15px;
+            margin: 5px 0;
+        }
+        
+        .footer-note li::before {
+            content: "- ";
+        }
+
+        /* Controls */
+        .no-print {
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #1e293b;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        @media print {
+            body { padding: 0; background: #fff; }
+            .container { 
+                box-shadow: none; 
+                border-width: 4px;
+                outline: none;
+                margin: 0; 
+                padding: 10mm;
+                max-width: 100%; 
+                break-after: page;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="/admin/" class="btn no-print" style="position: absolute; top: 15px; left: 15px; background: #dc3545; z-index: 1000;"><i class="fas fa-arrow-right"></i> رجوع</a>
+
+<div class="no-print" style="margin-bottom: 10px;">
+    <strong>بحث وتمييز:</strong>
+    <input type="text" id="hl-unit" placeholder="رقم الوحدة" onkeyup="highlightRows(event)">
+    <input type="text" id="hl-member" placeholder="رقم العضوية" onkeyup="highlightRows(event)">
+    <input type="text" id="hl-rank" placeholder="الرتبة" onkeyup="highlightRows(event)">
+    <input type="text" id="hl-name" placeholder="الاسم" onkeyup="highlightRows(event)">
+    <a href="{% url 'fax_history' %}" class="btn" style="background: #64748b; margin-right: 15px;"><i class="fas fa-history"></i> سجل الملاحق</a>
+    {% if request.user.is_superuser %}
+    <button type="button" class="btn" style="background: #ef4444; margin-right: auto;" onclick="savePrintHistory()"><i class="fas fa-save"></i> حفظ في سجل الملاحق</button>
+    {% endif %}
+</div>
+<div class="no-print">
+    <form method="GET" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <select name="club" required>
+            <option value="">-- اختر النادي --</option>
+            {% for club in clubs %}
+            <option value="{{ club.id }}" {% if selected_club.id == club.id %}selected{% endif %}>{{ club.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="period" id="periodFilter" onchange="periodChanged()">
+            <option value="">-- اختر الأسبوع/الفوج --</option>
+            {% for p in periods %}
+            <option value="{{ p.id }}" {% if selected_period == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="text" name="from" placeholder="من (DD-MM-YYYY)" value="{{ date_from }}">
+        <input type="text" name="to" placeholder="إلى (DD-MM-YYYY)" value="{{ date_to }}">
+        
+        <label class="checkbox-label">
+            <input type="checkbox" name="is_addendum" value="1" {% if request.GET.is_addendum %}checked{% endif %}>
+            إصدار كملحق
+        </label>
+
+        <button type="submit" class="btn"><i class="fas fa-sync"></i> عرض التقرير</button>
+        <button type="button" class="btn" style="background: #0ea5e9;" onclick="window.print()"><i class="fas fa-print"></i> طباعة الفاكس</button>
+    </form>
+</div>
+
+{% if selected_club %}
+<div class="container">
+    
+    <!-- Outer borders using outline in CSS -->
+
+    <table class="header-table">
+        <tr>
+            <td class="header-right-col" style="text-align: center; vertical-align: middle;">
+                <img src="{% static 'img/logo_transparent.png' %}" style="height: 100px; width: auto; object-fit: contain;" alt="Logo">
+            </td>
+            
+            <td class="header-center-col" style="vertical-align: middle;">
+                <div style="font-size: 24px;">نموذج إشارة</div>
+                <div style="font-size: 18px; margin-top: 5px;">رقم : ( SF-08-05-03 )</div>
+            </td>
+            
+            <td class="header-left-col">
+                <table class="doc-meta">
+                    <tr><td colspan="2" style="text-align: center; border-bottom: 1px solid #000 !important; padding-bottom: 5px !important; margin-bottom: 5px;">الإصـــــدار: الأول</td></tr>
+                    <tr><td>تاريخ الإصدار:</td><td>2024/8/1</td></tr>
+                    <tr><td>رقم التعديل:</td><td></td></tr>
+                    <tr><td>تاريخ التعديل:</td><td></td></tr>
+                    <tr><td>عدد الصفحات:</td><td></td></tr>
+                    <tr><td>رقم النسخة:</td><td></td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 5px;">
+        <div style="text-align: right; font-size: 16px; font-weight: 800; line-height: 1.5;">
+            <div>وزارة الـــدفــــــاع</div>
+            <div>إدارة نوادي وفنادق القوات المسلحة</div>
+            <div>المجمع الخدمي لنوادي وفنادق 6 اكتوبر</div>
+            <div>القيــــــــــــد : 300 / 6أ .</div>
+            <div>التاريـــــــــخ : {{ today|default:"    /    / 2025" }} .</div>
+        </div>
+        <div style="text-align: left;">
+            <div style="border: 2px solid #000; padding: 10px 15px; font-size: 18px; font-weight: 900; min-width: 200px; display: inline-block;">
+                رقم الصادر :
+                <span style="display:inline-block; width: 120px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-title-container">
+        {% if is_addendum and supplement_number > 0 %}
+        <div class="mulhaq-title">ملحق ({{ supplement_number }})</div>
+        {% endif %}
+        <div class="club-title">مصيف ( {{ selected_club.name }} )</div>
+        <div class="week-dates">الأسبوع رقم ({% for p in periods %}{% if p.id|stringformat:"s" == selected_period %}{{ p.name }}{% endif %}{% endfor %}{% if not selected_period %}............{% endif %}) الفترة من {{ date_from }} إلى {{ date_to }}</div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th width="3%" rowspan="2">م</th>
+                <th width="7%" rowspan="2">رقم<br>العضوية</th>
+                <th width="11%" rowspan="2">الرتبة</th>
+                <th width="36%" rowspan="2">الاسم</th>
+                <th width="5%" rowspan="2">المستفيد</th>
+                <th width="6%" rowspan="2">صلة<br>القرابة</th>
+                <th width="6%" rowspan="2">تاريخ<br>الحجز</th>
+                <th width="8%" rowspan="2">رقم<br>الشقة</th>
+                <th width="18%" colspan="2">ملاحظات</th>
+            </tr>
+            <tr>
+                <th style="border-top: 2px solid #000;">وصول</th>
+                <th style="border-top: 2px solid #000;">مغادرة</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bookings %}
+            <tr data-booking-id="{{ b.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-cell">{{ b.guest_id_no|default:"" }}</td>
+                <td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-cell">{% if not b.guest_rank and b.person_type %}{{ b.get_person_type_display }}{% else %}{{ b.guest_rank|default:"--" }}{% endif %}</td>
+                <td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-cell" style="text-align: right; padding-right: 8px;">{{ b.guest_name }}</td>
+                <td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-cell">{% if b.person_type == 'MARTYR' %}{{ b.beneficiary|default:"" }}{% endif %}</td>
+                <td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-cell" style="outline-color: #0ea5e9; cursor: text;">{% if b.person_type == 'MARTYR' %}{{ b.get_beneficiary_relation_display|default:"" }}{% endif %}</td>
+                <td>{% if b.record_date %}{{ b.record_date|date:"n/j" }}{% else %}{{ b.created_at|date:"n/j" }}{% endif %}</td>
+                <td>{{ b.unit.unit_no }}{% if 'جمصة' in selected_club.name and b.unit.floor.building %} / {{ b.unit.floor.building.name|cut:"فندق "|cut:"عمارة " }}{% endif %}</td>
+                <td>{{ b.start_date|date:"n/j" }}</td>
+                <td>{{ b.end_date|date:"n/j" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="10">لا توجد حجوزات للفترة المذكورة</td></tr>
+            {% endfor %}
+            <!-- Fill empty rows to make table look complete if needed, using a loop in a script or just blank TRs -->
+            {% if bookings.count < 5 %}
+                {% for i in "12345" %}
+                <tr>
+                    <td>-</td><td></td><td></td><td></td><td></td><td {% if request.user.is_superuser %}contenteditable="true"{% endif %} class="editable-contract" style="outline-color: #0ea5e9; cursor: text;"></td><td></td><td></td><td></td><td></td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="signatures">
+        <p>تم المراجعة بواسطة :</p>
+        
+        <div class="sig-row">
+            <div class="sig-col" style="width: 25%;">
+                <p>التوقيع /</p>
+                <p>محمد فرج محمـــد</p>
+                <p>قســم الاسكــــــــــان</p>
+            </div>
+            <div class="sig-col" style="width: 45%; padding-right: 20px;">
+                <p>التوقيع /</p>
+                <p>مدنية / امال حلمي ابو العزم</p>
+                <p>قســـــم الاســـــــكان</p>
+            </div>
+            <div class="sig-col" style="width: 30%; padding-right: 20px;">
+                <p>التوقيع /</p>
+                <p>مدني / احمد حلمي عرفان</p>
+                <p>قســـــم الاســـــــكان</p>
+            </div>
+        </div>
+
+        <div class="sig-row" style="margin-top: 5px;">
+            <div class="sig-col" style="width: 40%; margin-right: auto; text-align: right;">
+                <p style="margin-bottom: 2px;">التوقيع /</p>
+                <p style="margin-bottom: 2px;">عقيــــــد / محمود عز الدين</p>
+                <p>رئيــــس قســــم الاســــكان</p>
+            </div>
+        </div>
+        
+        <hr style="border-top: 2px solid #000; margin: 10px 0;">
+
+        <div class="sig-col-large">
+            <p>يعتمد ،،</p>
+            <p>التوقيع /</p>
+            <p>عقيـــــــد / وليـــــد فـــــاروق محــمــد</p>
+            <p>قائد المجمع الخدمي لنوادي وفنادق 6 أكتوبر</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <p style="text-decoration: underline; display: inline-block;">ملحوظه :</p>
+        <ul>
+            <li>يمنع نهائياً تعديل أرقام الوحدات السكنية للأعضاء بالكشف المرفق .</li>
+            <li>في حالة عدم حضور العضو لا يتم تسكين وحدته إلا بمراجعة السيد قائد المجمع شخصياً .</li>
+            {% if commander_units %}
+            <li>عدم تسكين الوحدات الآتية بعد نهائياً إلا بمراجعة السيد قائد المجمع شخصياً ({{ commander_units|join:" ، " }})</li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <div style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 12px; color: #555; font-family: Arial, sans-serif; direction: ltr;">
+        Made by IT Departement (Ahmed &amp; mokhtar)
+    </div>
+
+</div>
+{% else %}
+<div style="text-align: center; padding: 100px; color: #94a3b8; font-size: 18px;">
+    <i class="fas fa-search" style="font-size: 50px; margin-bottom: 20px; display: block;"></i>
+    <p>الرجاء اختيار النادي ونطاق التاريخ لإنشاء الفاكس الرسمي</p>
+</div>
+{% endif %}
+
+<script>
+    function highlightRows(event) {
+        const u = document.getElementById('hl-unit').value.toLowerCase();
+        const m = document.getElementById('hl-member').value.toLowerCase();
+        const r = document.getElementById('hl-rank').value.toLowerCase();
+        const n = document.getElementById('hl-name').value.toLowerCase();
+        
+        const rows = document.querySelectorAll('.data-table tbody tr');
+        let firstMatch = null;
+
+        rows.forEach(row => {
+            if (row.children.length < 8 || row.children[0].innerText === '-') return;
+            
+            const memCell = row.children[1].innerText.toLowerCase();
+            const rankCell = row.children[2].innerText.toLowerCase();
+            const nameCell = row.children[3].innerText.toLowerCase();
+            const unitCell = row.children[7].innerText.toLowerCase();
+            
+            let match = true;
+            if (u && !unitCell.includes(u)) match = false;
+            if (m && !memCell.includes(m)) match = false;
+            if (r && !rankCell.includes(r)) match = false;
+            if (n && !nameCell.includes(n)) match = false;
+            
+            if (u || m || r || n) {
+                if (match) {
+                    row.style.backgroundColor = '#fef08a';
+                    if (!firstMatch) firstMatch = row;
+                } else {
+                    row.style.backgroundColor = '';
+                }
+            } else {
+                row.style.backgroundColor = '';
+            }
+        });
+
+        if (event && event.key === 'Enter' && firstMatch) {
+            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function savePrintHistory() {
+        const club_id = document.querySelector('select[name="club"]').value;
+        const period_id = document.getElementById('periodFilter').value;
+        if (!club_id || !period_id) {
+            alert("يجب اختيار النادي والفترة أولاً");
+            return;
+        }
+        const booking_ids = [];
+        document.querySelectorAll('tr[data-booking-id]').forEach(tr => {
+            booking_ids.push(tr.getAttribute('data-booking-id'));
+        });
+        
+        if (booking_ids.length === 0) {
+            alert("لا يوجد حجوزات لحفظها");
+            return;
+        }
+        
+        if (!confirm("هل أنت متأكد من حفظ هذه الحجوزات في السجل؟ سيؤدي ذلك إلى استبعادها من الملاحق القادمة إلا إذا تم اختيارها خصيصاً.")) return;
+        
+        fetch("{% url 'fax_report' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                club_id: club_id,
+                period_id: period_id,
+                booking_ids: booking_ids
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                alert("تم الحفظ بنجاح كملحق رقم " + data.supplement_number);
+            } else {
+                alert("حدث خطأ: " + data.error);
+            }
+        }).catch(err => {
+            alert("حدث خطأ في الاتصال");
+        });
+    }
+
+    const periodsData = {
+        {% for p in periods %}
+        "{{ p.id }}": {
+            "start": "{{ p.start_date|date:'d-m-Y' }}",
+            "end": "{{ p.end_date|date:'d-m-Y' }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+    
+    function periodChanged() {
+        const pId = document.getElementById('periodFilter').value;
+        if(pId && periodsData[pId]) {
+            document.querySelector('input[name="from"]').value = periodsData[pId].start;
+            document.querySelector('input[name="to"]').value = periodsData[pId].end;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const editableCells = document.querySelectorAll(".editable-cell");
+        editableCells.forEach((cell, index) => {
+            cell.addEventListener("keydown", function(e) {
+                if (e.key === "Enter" || e.key === "ArrowDown") {
+                    e.preventDefault(); // prevent new line
+                    if (index + 1 < editableCells.length) {
+                        editableCells[index + 1].focus();
+                    } else {
+                        cell.blur();
+                    }
+                } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    if (index - 1 >= 0) {
+                        editableCells[index - 1].focus();
+                    }
+                }
+            });
+            // Select all text on focus
+            cell.addEventListener("focus", function() {
+                setTimeout(() => {
+                    const range = document.createRange();
+                    range.selectNodeContents(this);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }, 10);
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

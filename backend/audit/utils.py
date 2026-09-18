@@ -1,22 +1,11 @@
-from typing import Any
+from .models import AuditLog
 
-from .models import AuditEvent
-
-
-def log_event(
-    *,
-    action: str,
-    object_type: str,
-    object_id: str,
-    message: str = "",
-    actor=None,
-    metadata: dict[str, Any] | None = None,
-) -> None:
-    AuditEvent.objects.create(
-        actor=actor,
+def log_event(action, object_type=None, object_id=None, message="", metadata=None, user=None):
+    AuditLog.objects.create(
         action=action,
         object_type=object_type,
         object_id=object_id,
         message=message,
-        metadata=metadata or {},
+        metadata=metadata,
+        user=user
     )

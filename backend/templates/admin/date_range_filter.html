@@ -1,0 +1,61 @@
+{% load i18n %}
+<div class="date-range-filter-container" style="padding: 12px 10px; border-bottom: 1px solid var(--border-color, #eee);">
+    <h3 style="margin: 0 0 10px 0; padding: 0; font-size: 13px; color: var(--body-quiet-color, #666); font-weight: bold; border: none;">{{ title }}</h3>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div>
+            <label style="display:block; font-size:11px; margin-bottom:3px; color: var(--body-quiet-color, #777); text-align: right;">من تاريخ:</label>
+            <input type="date" id="id_from_date" value="{{ spec.from_date }}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; background: var(--body-bg, #fff); color: var(--body-fg, #333); box-sizing: border-box; text-align: right;">
+        </div>
+        <div>
+            <label style="display:block; font-size:11px; margin-bottom:3px; color: var(--body-quiet-color, #777); text-align: right;">إلى تاريخ:</label>
+            <input type="date" id="id_to_date" value="{{ spec.to_date }}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; background: var(--body-bg, #fff); color: var(--body-fg, #333); box-sizing: border-box; text-align: right;">
+        </div>
+        <div style="display: flex; gap: 6px; margin-top: 4px;">
+            <button type="button" id="btn_apply_date_filter" style="flex: 1; background: #34495e; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">تطبيق</button>
+            {% if spec.from_date or spec.to_date %}
+                <button type="button" id="btn_clear_date_filter" style="background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">إلغاء</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const fromInput = document.getElementById('id_from_date');
+        const toInput = document.getElementById('id_to_date');
+        const applyBtn = document.getElementById('btn_apply_date_filter');
+        const clearBtn = document.getElementById('btn_clear_date_filter');
+
+        function getQueryParams() {
+            return new URLSearchParams(window.location.search);
+        }
+
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                const params = getQueryParams();
+                if (fromInput.value) {
+                    params.set('from_date', fromInput.value);
+                } else {
+                    params.delete('from_date');
+                }
+                if (toInput.value) {
+                    params.set('to_date', toInput.value);
+                } else {
+                    params.delete('to_date');
+                }
+                params.delete('p'); // Reset pagination to page 1
+                window.location.search = params.toString();
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                const params = getQueryParams();
+                params.delete('from_date');
+                params.delete('to_date');
+                params.delete('p'); // Reset pagination
+                window.location.search = params.toString();
+            });
+        }
+    })();
+</script>

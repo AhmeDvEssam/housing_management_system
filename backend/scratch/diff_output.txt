@@ -1,0 +1,14 @@
+Missing in Django: 10
+SRC=MEMBER_CONTRACT | Mem=12051 | Club=نادي راس البر | Flat=924 | Dates=2025-07-03 to 2025-07-09
+SRC=MEMBER_CONTRACT | Mem=13990 | Club=نادي فايد | Flat=0 | Dates=2025-09-05 to 2025-09-11
+SRC=MEMBER_CONTRACT | Mem=23728 | Club=نادي راس البر | Flat=500 | Dates=2025-08-28 to 2025-09-03
+SRC=PERSON_BOOKED | Mem=7855 | Club=نادي فايد | Flat=0 | Dates=2025-08-20 to 2025-08-27
+SRC=PERSON_BOOKED | Mem= | Club=نادي بورسعيد | Flat=1 | Dates=2025-10-24 to 2025-10-25
+SRC=PERSON_BOOKED | Mem= | Club=فندق الانفوشي | Flat=1 | Dates=2025-10-16 to 2025-10-18
+SRC=PERSON_BOOKED | Mem= | Club=فندق الانفوشي | Flat=1 | Dates=2025-11-06 to 2025-11-08
+SRC=PERSON_BOOKED | Mem= | Club=نادي بورسعيد | Flat=0 | Dates=2025-10-24 to 2025-10-25
+SRC=PERSON_BOOKED | Mem= | Club=فندق الانفوشي | Flat=0 | Dates=2025-10-16 to 2025-10-18
+SRC=PERSON_BOOKED | Mem= | Club=فندق الانفوشي | Flat=0 | Dates=2025-11-06 to 2025-11-08
+
+Extra in Django: 1
+ID=392775 | Mem=85985 | Club=نادي راس البر | Flat=924 | Dates=2025-08-04 to 2025-08-10

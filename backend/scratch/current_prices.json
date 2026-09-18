@@ -1,0 +1,1283 @@
+[
+  {
+    "id": 1,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 450.0,
+    "price_family": 565.0,
+    "price_civilian_af": 675.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 2,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 3,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 440.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 4,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 5,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 6,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 250.0,
+    "price_family": 315.0,
+    "price_civilian_af": 375.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 7,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 440.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 8,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 9,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 205.0,
+    "price_family": 260.0,
+    "price_civilian_af": 310.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 10,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 225.0,
+    "price_family": 285.0,
+    "price_civilian_af": 340.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 11,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 180.0,
+    "price_family": 225.0,
+    "price_civilian_af": 270.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 12,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 200.0,
+    "price_family": 250.0,
+    "price_civilian_af": 300.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 13,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 275.0,
+    "price_family": 415.0,
+    "price_civilian_af": 415.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 14,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 450.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 15,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 600.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 16,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 500.0,
+    "price_family": 750.0,
+    "price_civilian_af": 750.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 17,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 525.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 18,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 450.0,
+    "price_family": 675.0,
+    "price_civilian_af": 675.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 19,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 600.0,
+    "price_family": 900.0,
+    "price_civilian_af": 900.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 20,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 800.0,
+    "price_family": 1200.0,
+    "price_civilian_af": 1200.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 21,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 22,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 600.0,
+    "price_family": 750.0,
+    "price_civilian_af": 900.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 23,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 24,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 25,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 26,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 27,
+    "clubs": [],
+    "buildings": [],
+    "months": "",
+    "unit_types": null,
+    "classifications": null,
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 46,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث,قبلى - صف ثالث",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 47,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث - مكيف,بحرى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 440.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 29,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "بحرى - صف اول - مكيف,بحرى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 2500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 30,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "بحرى - صف اول - مكيف,بحرى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 2000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 31,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "بحرى - صف اول - مكيف,بحرى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 450.0,
+    "price_family": 565.0,
+    "price_civilian_af": 675.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 33,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "قبلى - صف اول - مكيف,قبلى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 34,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "قبلى - صف اول - مكيف,قبلى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 2000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 35,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثانى,بحرى - صف ثانى,بحرى - صف ثانى,بحرى - صف ثانى",
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 440.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 36,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثانى,بحرى - صف ثانى,بحرى - صف ثانى,بحرى - صف ثانى",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 37,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثانى,بحرى - صف ثانى,بحرى - صف ثانى",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 2000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 38,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 39,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 40,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4",
+      "عمارة 5",
+      "عمارة 6"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى,قبلى - صف ثانى",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 41,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث,بحرى - صف ثالث",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 42,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث,بحرى - صف ثالث",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 43,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث,بحرى - صف ثالث",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 44,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث,قبلى - صف ثالث",
+    "view_types": null,
+    "price_military": 250.0,
+    "price_family": 315.0,
+    "price_civilian_af": 375.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 45,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 8",
+      "عمارة 9"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث,قبلى - صف ثالث",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 800.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 48,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث - مكيف,بحرى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 49,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "بحرى - صف ثالث - مكيف,بحرى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 2000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 50,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث - مكيف,قبلى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 51,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "5,6,9,10",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث - مكيف,قبلى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 52,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 7",
+      "عمارة 10"
+    ],
+    "months": "7,8",
+    "unit_types": null,
+    "classifications": "قبلى - صف ثالث - مكيف,قبلى - صف ثالث - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 53,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2"
+    ],
+    "months": "5,6,7,8,9,10",
+    "unit_types": null,
+    "classifications": "بحرى VIP- صف اول - مكيف",
+    "view_types": null,
+    "price_military": 0.0,
+    "price_family": 0.0,
+    "price_civilian_af": 0.0,
+    "price_civilian": 3000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 54,
+    "clubs": [
+      "نادي جمصة"
+    ],
+    "buildings": [
+      "فندق 1"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى",
+    "view_types": null,
+    "price_military": 205.0,
+    "price_family": 260.0,
+    "price_civilian_af": 310.0,
+    "price_civilian": 450.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 55,
+    "clubs": [
+      "نادي جمصة"
+    ],
+    "buildings": [
+      "فندق 1"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى,بحري,قبلى",
+    "view_types": null,
+    "price_military": 225.0,
+    "price_family": 285.0,
+    "price_civilian_af": 340.0,
+    "price_civilian": 500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 56,
+    "clubs": [
+      "نادي جمصة"
+    ],
+    "buildings": [
+      "فندق 2"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى,بحري,بحري,بحري,بحري,بحري,قبلى,قبلى,بحري",
+    "view_types": null,
+    "price_military": 180.0,
+    "price_family": 225.0,
+    "price_civilian_af": 270.0,
+    "price_civilian": 300.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 57,
+    "clubs": [
+      "نادي جمصة"
+    ],
+    "buildings": [
+      "فندق 2"
+    ],
+    "months": "",
+    "unit_types": null,
+    "classifications": "قبلى,بحري,بحري,بحري,بحري,بحري,قبلى,بحري,بحري",
+    "view_types": null,
+    "price_military": 200.0,
+    "price_family": 250.0,
+    "price_civilian_af": 300.0,
+    "price_civilian": 350.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 58,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "ROOM,ROOM,ROOM,ROOM,ROOM,ROOM,ROOM",
+    "classifications": "قبلى,قبلى,قبلى",
+    "view_types": null,
+    "price_military": 275.0,
+    "price_family": 415.0,
+    "price_civilian_af": 415.0,
+    "price_civilian": 600.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 62,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "ROOM",
+    "classifications": "بحري - مميز",
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 600.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 1000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 63,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "ROOM",
+    "classifications": "بحري",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 450.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 800.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 64,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "ROOM",
+    "classifications": "بحري - مكيف",
+    "view_types": null,
+    "price_military": 500.0,
+    "price_family": 750.0,
+    "price_civilian_af": 750.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 67,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "SUITE",
+    "classifications": "قبلى",
+    "view_types": null,
+    "price_military": 350.0,
+    "price_family": 525.0,
+    "price_civilian_af": 525.0,
+    "price_civilian": 1000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 68,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "SUITE",
+    "classifications": "بحري",
+    "view_types": null,
+    "price_military": 450.0,
+    "price_family": 675.0,
+    "price_civilian_af": 675.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 69,
+    "clubs": [
+      "نادي بورسعيد"
+    ],
+    "buildings": [
+      "عمارة 1",
+      "عمارة 2"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 800.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 70,
+    "clubs": [
+      "نادي بورسعيد"
+    ],
+    "buildings": [
+      "عمارة 3",
+      "عمارة 4"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "",
+    "view_types": null,
+    "price_military": 600.0,
+    "price_family": 750.0,
+    "price_civilian_af": 900.0,
+    "price_civilian": 1200.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 71,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "SUITE",
+    "classifications": "بحري - مميز",
+    "view_types": null,
+    "price_military": 600.0,
+    "price_family": 900.0,
+    "price_civilian_af": 900.0,
+    "price_civilian": 1300.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 72,
+    "clubs": [
+      "فندق الانفوشي"
+    ],
+    "buildings": [
+      "فندق"
+    ],
+    "months": "",
+    "unit_types": "SUITE",
+    "classifications": "بحري - مكيف",
+    "view_types": null,
+    "price_military": 800.0,
+    "price_family": 1200.0,
+    "price_civilian_af": 1200.0,
+    "price_civilian": 1900.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 73,
+    "clubs": [
+      "نادي بورسعيد"
+    ],
+    "buildings": [
+      "عمارة 5",
+      "عمارة 6",
+      "عمارة 7"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 700.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 74,
+    "clubs": [
+      "نادي فايد"
+    ],
+    "buildings": [
+      "عمارة 1"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 900.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 75,
+    "clubs": [
+      "نادي فايد"
+    ],
+    "buildings": [
+      "عمارة 2"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "",
+    "view_types": null,
+    "price_military": 300.0,
+    "price_family": 375.0,
+    "price_civilian_af": 450.0,
+    "price_civilian": 1000.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 76,
+    "clubs": [
+      "نادي فايد"
+    ],
+    "buildings": [
+      "عمارة 3"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "بحري - مكيف",
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 1500.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 77,
+    "clubs": [
+      "نادي فايد"
+    ],
+    "buildings": [
+      "عمارة 3"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "بحري - مميز - مكيف",
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 1600.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  },
+  {
+    "id": 32,
+    "clubs": [
+      "نادي راس البر"
+    ],
+    "buildings": [
+      "عمارة 2",
+      "عمارة 1"
+    ],
+    "months": "",
+    "unit_types": "",
+    "classifications": "قبلى - صف اول - مكيف",
+    "view_types": null,
+    "price_military": 400.0,
+    "price_family": 500.0,
+    "price_civilian_af": 600.0,
+    "price_civilian": 0.0,
+    "price_martyr": 0.0,
+    "price_veteran": 0.0
+  }
+]

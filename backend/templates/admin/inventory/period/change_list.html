@@ -1,0 +1,20 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+<li>
+    <a href="export-excel/" class="button" style="background:#27ae60; color:white;">
+        📥 تصدير إلى Excel
+    </a>
+</li>
+<li>
+    <form method="post" action="import-excel/" enctype="multipart/form-data" style="display:inline-flex; align-items:center; gap:8px;">
+        {% csrf_token %}
+        <input type="file" name="excel_file" accept=".xlsx,.xls" required style="font-size:12px;">
+        <button type="submit" class="button" style="background:#3498db; color:white;">
+            📤 استيراد من Excel
+        </button>
+    </form>
+</li>
+{{ block.super }}
+{% endblock %}

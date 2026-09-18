@@ -1,0 +1,976 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!--  Prevent admin panel being crawled by search engines -->
+    <meta name="robots" content="none, noarchive">
+    <script>
+        (function() {
+            var mode = localStorage.getItem('jazzmin-theme-mode') || 'light';
+            if (mode === 'auto') {
+                mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-bs-theme', mode);
+        })();
+    </script>
+
+    <title>اختر تقرير الحجوزات عن يوم لتغييره | نظام إدارة الإسكان</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/static/vendor/fontawesome-free/css/all.min.css">
+
+    <!-- Bootstrap and adminLTE -->
+    <link rel="stylesheet" href="/static/vendor/adminlte/css/adminlte.min.css" id="adminlte-css">
+
+    <!-- Bootswatch theme -->
+    <link rel="stylesheet"  id="jazzmin-theme" data-theme-base="/static/vendor/bootswatch" />
+    
+
+    <!-- Custom fixes for django -->
+    <link rel="stylesheet" href="/static/jazzmin/css/main.css">
+
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/jazzmin_custom.css">
+    
+
+    <!-- favicons -->
+    <link rel="shortcut icon" href="/static/vendor/adminlte/img/AdminLTELogo.png" type="image/png">
+    <link rel="icon" href="/static/vendor/adminlte/img/AdminLTELogo.png" sizes="32x32" type="image/png">
+
+    
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    
+
+    
+
+     
+    <link rel="stylesheet" href="/static/vendor/select2/css/select2.min.css">
+
+    
+        <script type="text/javascript" src="/admin/jsi18n/"></script>
+    
+    <link href="/static/admin/css/custom_admin_fixes.css" media="all" rel="stylesheet">
+    
+
+<style>
+    /* Table Styling for Web View (Excel-like but polished) */
+    #changelist table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    #changelist table thead th {
+        background-color: #f8fafc;
+        color: #334155;
+        border: 1px solid #d1d5db;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+    }
+    #changelist table tbody td {
+        border: 1px solid #e2e8f0;
+        padding: 8px 10px;
+        text-align: center;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+    #changelist table tbody tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    #changelist table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+    
+    /* Remove heavy styling from badges for a cleaner look in web */
+    #changelist table tbody td span {
+        border-radius: 4px !important;
+        font-size: 12px;
+        padding: 4px 8px !important;
+    }
+
+    /* Print Specific Styling */
+    @media print {
+        @page { size: landscape; margin: 1cm; }
+        body * {
+            visibility: hidden;
+        }
+        #changelist, #changelist * {
+            visibility: visible;
+        }
+        #changelist {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        /* Hide UI elements not meant for printing */
+        #changelist-filter, #custom-filters-container, #changelist-search, .action-counter, .actions, .pagination, .object-tools, #header, .breadcrumbs, .submit-row {
+            display: none !important;
+        }
+        /* Black and white table for print */
+        #changelist table {
+            border: 1pt solid #000 !important;
+            box-shadow: none !important;
+        }
+        #changelist table thead th {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1pt solid #000 !important;
+        }
+        #changelist table tbody td {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1pt solid #000 !important;
+        }
+        #changelist table tbody tr {
+            background-color: #fff !important;
+        }
+        /* Strip colored badges completely for print */
+        #changelist table tbody td span, #changelist table tbody td a {
+            background: none !important;
+            color: #000 !important;
+            border: none !important;
+            padding: 0 !important;
+            text-decoration: none !important;
+        }
+        /* Add a title for the print view */
+        #changelist::before {
+            content: "تقرير حجوزات عن يوم (من: 2026-07-04 إلى: 2026-07-04)";
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            visibility: visible;
+        }
+    }
+</style>
+
+    
+     
+    <script src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script src="/static/admin/js/booking_club_filter.js"></script>
+<script src="/static/admin/js/jquery.init.js"></script>
+<script src="/static/admin/js/booking_member_fetch.js"></script>
+<script src="/static/admin/js/core.js"></script>
+<script src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script src="/static/admin/js/actions.js"></script>
+<script src="/static/admin/js/urlify.js"></script>
+<script src="/static/admin/js/prepopulate.js"></script>
+<script src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
+
+</head>
+<body class="layout-fixed no-sidebar bg-body-tertiary   app-reports model-dailybookingreport change-list accent-primary theme-default" data-admin-utc-offset="10800">
+
+    <div class="app-wrapper">
+
+    
+        <nav class="app-header navbar navbar-expand bg-body navbar-white navbar-light" id="jazzy-navbar">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+
+                
+                    <li class="nav-item">
+                        <a href="/admin/" class="brand-link">
+                            <img src="/static/vendor/adminlte/img/AdminLTELogo.png" alt="الإسكان Logo" class="img-circle brand-image" style="opacity: .8; margin: 0 0 0 5px;">
+                        </a>
+                    </li>
+                
+
+                
+                
+                    <li class="nav-item d-none d-sm-inline-block">
+                        
+                            <a href="/admin/" class="nav-link" >الرئيسية</a>
+                        
+                    </li>
+                
+                    <li class="nav-item d-none d-sm-inline-block">
+                        
+                            <a href="/dashboard/" class="nav-link" >لوحة المتابعة</a>
+                        
+                    </li>
+                
+                    <li class="nav-item d-none d-sm-inline-block">
+                        
+                            <a href="/analytics/" class="nav-link" >لوحة التحليلات</a>
+                        
+                    </li>
+                
+                    <li class="nav-item d-none d-sm-inline-block dropdown">
+                        
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                الحجوزات
+                            </a>
+                            <div class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/booking/" >الحجوزات</a>
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/application/" >استمارات التقديم</a>
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/lotteryexclusion/" >استبعادات القرعة</a>
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/lotterydraft/" >مسودات نتائج القرعة</a>
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/contract/" >العقود</a>
+                                
+                                    <a class="dropdown-item" href="/admin/bookings/lotteryresult/" >نتائج القرعة المستوردة</a>
+                                
+                            </div>
+                        
+                    </li>
+                
+                    <li class="nav-item d-none d-sm-inline-block dropdown">
+                        
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                المخزون
+                            </a>
+                            <div class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/club/" >الأندية</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/building/" >المباني</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/floor/" >الأدوار</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/pricingrule/" >قواعد التسعير</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/unit/" >الوحدات</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/allocation/" >المخصصات</a>
+                                
+                                    <a class="dropdown-item" href="/admin/inventory/period/" >الأفواج والأسابيع</a>
+                                
+                            </div>
+                        
+                    </li>
+                
+                    <li class="nav-item d-none d-sm-inline-block dropdown">
+                        
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                الأعضاء
+                            </a>
+                            <div class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/admin/members/member/" >الأعضاء</a>
+                                
+                                    <a class="dropdown-item" href="/admin/members/familymember/" >أفراد العائلة</a>
+                                
+                                    <a class="dropdown-item" href="/admin/members/memberstatuslog/" >سجلات حالة الأعضاء</a>
+                                
+                            </div>
+                        
+                    </li>
+                
+            </ul>
+
+            
+                
+                    <form action="/admin/members/member/" method="GET" class="d-flex ms-2">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" name="q" type="search" placeholder="ابحث الأعضاء..." aria-label="ابحث الأعضاء...">
+                            <button class="btn btn-navbar" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                
+                    <form action="/admin/bookings/booking/" method="GET" class="d-flex ms-2">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" name="q" type="search" placeholder="ابحث الحجوزات..." aria-label="ابحث الحجوزات...">
+                            <button class="btn btn-navbar" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                
+            
+
+            <ul class="navbar-nav ms-auto">
+
+                
+                
+
+                
+
+                
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link btn" data-bs-toggle="dropdown" href="#" title="admin_test_123">
+                        <i class="far fa-user" aria-hidden="true"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" id="jazzy-usermenu">
+                        <span class="dropdown-header">Account</span>
+                        <div class="dropdown-divider"></div>
+                        <a href="/admin/password_change/" class="dropdown-item">
+                            <i class="fas fa-key me-2"></i> غيّر كلمة المرور
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form id="logout-form" method="post" action="/admin/logout/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="mwjWIIcgiNLrIZefLY8ZihqiVxZQRWYJ98hap66qgbVrvEoWtNwt63T767rA6Hvn">
+                            <button type="submit" class="dropdown-item"><i class="fas fa-users me-2"></i> تسجيل الخروج</button>
+                        </form>
+                        
+                        
+                        <div class="dropdown-divider"></div>
+                        
+                            <a href="/admin/auth/user/7/change/" class="dropdown-item dropdown-footer">See Profile</a>
+                        
+                    </div>
+                </li>
+            </ul>
+        </div>
+        </nav>
+        
+        
+        
+    
+
+    <main class="app-main" >
+        
+            
+            <div class="app-content-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h3 class="mb-0"> تقرير الحجوزات عن يوم </h3>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="float-sm-end">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/">الرئيسية</a></li>
+        <li class="breadcrumb-item"><a href="/admin/reports/">التقارير</a></li>
+        <li class="breadcrumb-item active">تقرير الحجوزات عن يوم</li>
+    </ol>
+</div>
+                            
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="app-content">
+                <div class="container-fluid">
+                    
+                        
+                    
+                    <div class="row">
+                        
+
+    
+
+    
+    
+        <div class="col-12 pb-4" id="change-list-filters">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <form id="changelist-search" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1" method="GET">
+                    
+                        
+
+<div class="form-group">
+    <select class="form-control search-filter" tabindex="-1" aria-hidden="true" data-name="booking_type">
+        <option value="">نوع الحجز</option>
+        <option value="">---------</option>
+        
+            
+        
+            
+                <option data-name="booking_type__exact" value="STANDARD" >
+                    حجز عادي
+                </option>
+            
+        
+            
+                <option data-name="booking_type__exact" value="LOTTERY" >
+                    قرعة
+                </option>
+            
+        
+            
+                <option data-name="booking_type__exact" value="ARMIES_REGIONS" >
+                    الجيوش والمناطق
+                </option>
+            
+        
+            
+                <option data-name="booking_type__exact" value="ALLOCATIONS" >
+                    مخصصات
+                </option>
+            
+        
+    </select>
+</div>
+
+
+<div class="form-group">
+    <select class="form-control search-filter" tabindex="-1" aria-hidden="true" data-name="person_type">
+        <option value="">نوع الشخص</option>
+        <option value="">---------</option>
+        
+            
+        
+            
+                <option data-name="person_type__exact" value="CIVILIAN_GENERAL" >
+                    مدني عام
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="CIVILIAN_AF" >
+                    مدني ق.م
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="MARTYR" >
+                    شهيد/مصاب
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="ACTIVE_MEMBER" >
+                    عضوية عاملة
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="FAMILY_MEMBER" >
+                    عضوية عائلية
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="MILITARY" >
+                    عسكري
+                </option>
+            
+        
+            
+                <option data-name="person_type__exact" value="VETERAN" >
+                    محارب
+                </option>
+            
+        
+    </select>
+</div>
+
+
+<div class="form-group">
+    <select class="form-control search-filter" tabindex="-1" aria-hidden="true" data-name="unit__floor__building__club">
+        <option value="">النادي</option>
+        <option value="">---------</option>
+        
+            
+        
+            
+                <option data-name="unit__floor__building__club__id__exact" value="96" >
+                    نادي بورسعيد
+                </option>
+            
+        
+            
+                <option data-name="unit__floor__building__club__id__exact" value="97" >
+                    نادي راس البر
+                </option>
+            
+        
+            
+                <option data-name="unit__floor__building__club__id__exact" value="98" >
+                    نادي فايد
+                </option>
+            
+        
+            
+                <option data-name="unit__floor__building__club__id__exact" value="99" >
+                    نادي جمصة
+                </option>
+            
+        
+            
+                <option data-name="unit__floor__building__club__id__exact" value="100" >
+                    فندق الانفوشي
+                </option>
+            
+        
+    </select>
+</div>
+
+
+<div class="form-group">
+    <select class="form-control search-filter" tabindex="-1" aria-hidden="true" data-name="unit__classification">
+        <option value="">التصنيف</option>
+        <option value="">---------</option>
+        
+            
+        
+            
+                <option data-name="unit__classification" value="بحرى - صف اول - مكيف" >
+                    بحرى - صف اول - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحرى - صف ثالث" >
+                    بحرى - صف ثالث
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحرى - صف ثالث - مكيف" >
+                    بحرى - صف ثالث - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحرى - صف ثانى" >
+                    بحرى - صف ثانى
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحرى VIP- صف اول - مكيف" >
+                    بحرى VIP- صف اول - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحري" >
+                    بحري
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحري - مكيف" >
+                    بحري - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحري - مميز" >
+                    بحري - مميز
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="بحري - مميز - مكيف" >
+                    بحري - مميز - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="قبلى" >
+                    قبلى
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="قبلى - صف اول - مكيف" >
+                    قبلى - صف اول - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="قبلى - صف ثالث" >
+                    قبلى - صف ثالث
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="قبلى - صف ثالث - مكيف" >
+                    قبلى - صف ثالث - مكيف
+                </option>
+            
+        
+            
+                <option data-name="unit__classification" value="قبلى - صف ثانى" >
+                    قبلى - صف ثانى
+                </option>
+            
+        
+    </select>
+</div>
+
+
+                    
+
+                    
+                        <input class="form-control" style="width: auto; min-width: 250px;" type="text" name="q" value="" id="searchbar"
+                            ">
+                    
+
+                    
+                        <button type="submit" class="btn btn-primary">ابحث</button>
+                        
+                        
+                        
+                            <input type="hidden" name="from_date" value="2026-07-04">
+                        
+                            <input type="hidden" name="to_date" value="2026-07-04">
+                        
+                    
+                </form>
+
+                
+    <ul class="object-tools">
+        
+                    
+                        
+
+
+
+    
+
+
+                    
+                
+        <li>
+            <a href="#" onclick="window.print(); return false;" class="addlink" style="background-color: #0f172a; border-radius: 4px; border: none;">
+                طباعة التقرير
+            </a>
+        </li>
+    </ul>
+
+            </div>
+        </div>
+    
+    <div id="custom-filters-container" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">من تاريخ الاضافة:</label>
+            <input type="date" name="from_date" id="custom_from_date" value="2026-07-04" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">إلى تاريخ الاضافة:</label>
+            <input type="date" name="to_date" id="custom_to_date" value="2026-07-04" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px; margin-right: auto;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">مصدر التسعير:</label>
+            <select id="price_source_toggle" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+                <option value="db">الداتابيز القديمة</option>
+                <option value="rules">قواعد التسعير</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var searchForm = document.getElementById("changelist-search");
+            var customFilters = document.getElementById("custom-filters-container");
+            if (searchForm && customFilters) {
+                // Move custom filters inside the search form, just after the search box
+                searchForm.appendChild(customFilters);
+                customFilters.style.background = "transparent";
+                customFilters.style.border = "none";
+                customFilters.style.padding = "0";
+                customFilters.style.margin = "10px 0 0 0";
+            }
+        });
+
+        // Clean up the ugly action counter text
+        document.addEventListener("DOMContentLoaded", function() {
+            var actionCounter = document.querySelector('.action-counter');
+            if (actionCounter) {
+                var totalCount = actionCounter.getAttribute('data-actions-icnt');
+                
+                // Hide original action counter so Django's actions.js doesn't mess with our text
+                actionCounter.style.display = 'none';
+                
+                // Hide the extra spans that show ugly text
+                var extraSpans = document.querySelectorAll('.action-counter ~ span.all, .action-counter ~ span.question, .action-counter ~ span.clear');
+                extraSpans.forEach(function(span) {
+                    span.style.display = 'none';
+                });
+                
+                // Create a clean, static total count span
+                if (totalCount) {
+                    var customCounter = document.createElement('span');
+                    customCounter.style.fontWeight = 'bold';
+                    customCounter.style.color = '#475569';
+                    customCounter.style.fontSize = '14px';
+                    customCounter.textContent = 'إجمالي الحجوزات: ' + totalCount;
+                    actionCounter.parentNode.insertBefore(customCounter, actionCounter);
+                }
+            }
+
+            // Price toggle logic
+            var priceToggle = document.getElementById('price_source_toggle');
+            if (priceToggle) {
+                priceToggle.addEventListener('change', function() {
+                    var source = this.value;
+                    var dbPrices = document.querySelectorAll('.price-db');
+                    var rulesPrices = document.querySelectorAll('.price-rules');
+                    
+                    if (source === 'db') {
+                        dbPrices.forEach(function(el) { el.style.display = 'inline'; });
+                        rulesPrices.forEach(function(el) { el.style.display = 'none'; });
+                    } else {
+                        dbPrices.forEach(function(el) { el.style.display = 'none'; });
+                        rulesPrices.forEach(function(el) { el.style.display = 'inline'; });
+                    }
+                    
+                    calculateTotalSum();
+                });
+            }
+
+            // Calculate Total Sum and append to table footer
+            function calculateTotalSum() {
+                var source = priceToggle ? priceToggle.value : 'db';
+                var selector = source === 'db' ? '.price-db' : '.price-rules';
+                var priceElements = document.querySelectorAll(selector);
+                
+                var totalSum = 0;
+                priceElements.forEach(function(el) {
+                    var val = parseFloat(el.getAttribute('data-val')) || 0;
+                    totalSum += val;
+                });
+
+                var table = document.querySelector('#result_list') || document.querySelector('#changelist table') || document.querySelector('table');
+                if (table) {
+                    var tfoot = table.querySelector('tfoot');
+                    if (!tfoot) {
+                        tfoot = document.createElement('tfoot');
+                        table.appendChild(tfoot);
+                    }
+                    
+                    // Determine how many columns before the price column (for colspan)
+                    // The price column has class "field-get_contract_price_display"
+                    var priceColHeader = table.querySelector('th.column-get_contract_price_display');
+                    var allHeaders = Array.from(table.querySelectorAll('th'));
+                    var colIndex = allHeaders.indexOf(priceColHeader);
+                    
+                    if (colIndex > -1) {
+                        tfoot.innerHTML = `
+                            <tr style="background-color: #e2e8f0; font-weight: bold;">
+                                <td colspan="${colIndex}" style="text-align: left; padding: 10px;">إجمالي الأسعار:</td>
+                                <td style="padding: 10px; color: #0f172a;">${totalSum.toLocaleString()} جنيه</td>
+                                <td colspan="${allHeaders.length - colIndex - 1}"></td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+
+            // Highlight duplicate units
+            function highlightDuplicateUnits() {
+                var table = document.querySelector('#result_list') || document.querySelector('#changelist table') || document.querySelector('table');
+                if (!table) return;
+                
+                // Find unit column index dynamically
+                var unitColIndex = -1;
+                var ths = table.querySelectorAll('thead th');
+                ths.forEach(function(th, index) {
+                    if (th.classList.contains('column-get_unit_only') || th.textContent.trim().indexOf('الوحدة') > -1) {
+                        unitColIndex = index;
+                    }
+                });
+                
+                var unitCells = [];
+                if (unitColIndex !== -1) {
+                    var rows = table.querySelectorAll('tbody tr');
+                    rows.forEach(function(row) {
+                        var tds = row.querySelectorAll('td, th');
+                        if (tds.length > unitColIndex) {
+                            unitCells.push(tds[unitColIndex]);
+                        }
+                    });
+                } else {
+                    // Fallback to class name
+                    unitCells = Array.from(table.querySelectorAll('td.field-get_unit_only'));
+                }
+
+                if (unitCells.length === 0) return;
+
+                var unitCounts = {};
+                unitCells.forEach(function(td) {
+                    var unitText = td.textContent.trim();
+                    if (unitText && unitText !== "-" && unitText !== "") {
+                        unitCounts[unitText] = (unitCounts[unitText] || 0) + 1;
+                    }
+                });
+
+                var duplicateUnits = Object.keys(unitCounts).filter(function(unit) {
+                    return unitCounts[unit] > 1;
+                });
+                
+                var colors = ['#fecaca', '#fef08a', '#bbf7d0', '#bfdbfe', '#e9d5ff', '#fed7aa', '#fbcfe8'];
+                var unitColorMap = {};
+                duplicateUnits.forEach(function(unit, index) {
+                    unitColorMap[unit] = colors[index % colors.length];
+                });
+
+                unitCells.forEach(function(td) {
+                    var unitText = td.textContent.trim();
+                    if (unitColorMap[unitText]) {
+                        var tr = td.closest('tr');
+                        if (tr) {
+                            tr.style.backgroundColor = unitColorMap[unitText];
+                        }
+                    }
+                });
+            }
+
+            // Initial calculation
+            setTimeout(function() {
+                calculateTotalSum();
+                highlightDuplicateUnits();
+            }, 500);
+        });
+    </script>
+
+
+    <div class="col-12">
+        <div>
+            <form id="changelist-form" method="post" novalidate><input type="hidden" name="csrfmiddlewaretoken" value="mwjWIIcgiNLrIZefLY8ZihqiVxZQRWYJ98hap66qgbVrvEoWtNwt63T767rA6Hvn">
+                <div id="content-main">
+                    
+                    <div class="module filtered" id="changelist">
+                    <div class="row">
+                        <div class="col-12">
+                            
+
+                            
+                                <div class="change-list-actions row pb-3">
+                                    <div class="col-12">
+                                        
+                                            
+
+
+<div class="actions">
+    
+        
+            <label><select name="action" required>
+  <option value="" selected>---------</option>
+
+  <option value="delete_selected">احذف تقرير الحجوزات عن يوم المحدّدة</option>
+
+</select></label><label><input type="hidden" name="select_across" value="0" class="select-across"></label>
+        
+        
+            <button type="submit" class="btn btn-primary" style="margin-right: 5px; margin-left: 15px;" title="نفذ الإجراء المحدّد" name="index" value="0">
+                نفّذ
+            </button>
+        
+        
+            
+                <span class="action-counter" data-actions-icnt="0">لا شيء محدد من 0</span>
+                
+            
+        
+    
+</div>
+
+                                        
+                                    </div>
+                                </div>
+                                
+
+
+
+
+
+                                
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+
+
+<div class="col-5">
+    <div class="dataTables_info" role="status" aria-live="polite">
+        0
+        
+            تقرير الحجوزات عن يوم
+        
+
+        
+        
+    </div>
+</div>
+
+<div class="col-7">
+    <ul class="pagination pagination-sm m-0 float-end">
+        
+    </ul>
+</div>
+
+                    </div>
+                </div>
+                </div>
+            </form>
+        </div>
+
+        <br class="clear"/>
+    </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        
+    </main>
+
+
+    
+        <footer class="app-footer ">
+            <div class="float-end d-none d-sm-inline">
+                <b>Jazzmin version</b> 3.0.4
+            </div>
+            
+                <strong>Copyright &copy; 2026 made by : AhmedEssam & mokhtar the IT departement 2026.</strong> All rights reserved.
+            
+        </footer>
+        
+    
+
+
+    </div>
+
+
+
+<!-- jQuery -->
+<script src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<!-- Bootstrap 5 -->
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/vendor/adminlte/js/adminlte.min.js"></script>
+<!-- Django customisations -->
+<script src="/static/jazzmin/js/main.js"></script>
+
+
+<script src="/static/js/admin_back_btn.js"></script>
+
+
+
+
+
+    
+    <script type="text/javascript" src="/static/vendor/select2/js/select2.min.js"></script>
+    <script>
+        
+        window.filterInputLengthDefault = 0;
+        window.filterInputLength = {
+            
+        }
+    </script>
+    <script type="text/javascript" src="/static/jazzmin/js/change_list.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+LOADED V5 SUCCESSFULLY
+Found fields: name, id, rank, phone
+memberSelect found!
+Initial value:
+Value changed via poll: 1646286
+onMemberSelected called with: 1646286
+Fetching API for ID: 1646286
+Fetch returned HTTP 200
+JSON parsed. Found=true
+Fields populated successfully.

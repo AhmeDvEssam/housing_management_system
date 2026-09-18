@@ -1,0 +1,22 @@
+Press any key to continue . . . 
+'nul' is not recognized as an internal or external command,
+operable program or batch file.
+The directory is not empty.
+'ns' is not recognized as an internal or external command,
+operable program or batch file.
+'4' is not recognized as an internal or external command,
+operable program or batch file.
+'6' is not recognized as an internal or external command,
+operable program or batch file.
+'8' is not recognized as an internal or external command,
+operable program or batch file.
+'~10' is not recognized as an internal or external command,
+operable program or batch file.
+'~12' is not recognized as an internal or external command,
+operable program or batch file.
+'P' is not recognized as an internal or external command,
+operable program or batch file.
+'ILE' is not recognized as an internal or external command,
+operable program or batch file.
+'completed' is not recognized as an internal or external command,
+operable program or batch file.

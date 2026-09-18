@@ -1,0 +1,13 @@
+Clubs:
+ID: 53, Name: نادى 6 اكتوبر بورسعيد, Units: 0
+ID: 54, Name: نادى 6 اكتوبر الانفوشى, Units: 0
+ID: 55, Name: نادى 6 اكتوبر ابو فير, Units: 0
+ID: 56, Name: نادى 6 اكتوبر فايـــد, Units: 0
+ID: 57, Name: نادى 6 اكتوبر جمصــــه, Units: 0
+ID: 58, Name: ادارة النوادى والفنادق, Units: 0
+ID: 59, Name: نادى 6 اكتوبر رأس البر, Units: 0
+ID: 60, Name: نادي بورسعيد, Units: 70
+ID: 61, Name: نادي راس البر, Units: 180
+ID: 62, Name: نادي فايد, Units: 52
+ID: 63, Name: نادي جمصة, Units: 70
+ID: 64, Name: فندق الانفوشي, Units: 78

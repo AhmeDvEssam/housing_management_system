@@ -1,0 +1,175 @@
+{
+  "clubs": {
+    "1": "ادارة النوادى والفنادق",
+    "2": "نادى 6 اكتوبر الانفوشى",
+    "3": "نادى 6 اكتوبر ابو فير",
+    "4": "نادى 6 اكتوبر فايـــد",
+    "5": "نادى 6 اكتوبر جمصــــه",
+    "7": "نادى 6 اكتوبر بورسعيد",
+    "8": "نادى 6 اكتوبر رأس البر",
+    "9": "نادى 6 اكتوبر الحلمية",
+    "10": "نادى 6 اكتوبر السلام"
+  },
+  "buildings": [
+    {
+      "pla_code": 5,
+      "pla_name": " 1",
+      "club_code": 7
+    },
+    {
+      "pla_code": 11,
+      "pla_name": "4",
+      "club_code": 7
+    },
+    {
+      "pla_code": 12,
+      "pla_name": " 5",
+      "club_code": 7
+    },
+    {
+      "pla_code": 4,
+      "pla_name": "فندق",
+      "club_code": 2
+    },
+    {
+      "pla_code": 6,
+      "pla_name": "2",
+      "club_code": 7
+    },
+    {
+      "pla_code": 13,
+      "pla_name": "عماره رقم3 الثلاثاء",
+      "club_code": 3
+    },
+    {
+      "pla_code": 7,
+      "pla_name": "3",
+      "club_code": 7
+    },
+    {
+      "pla_code": 8,
+      "pla_name": " 1",
+      "club_code": 4
+    },
+    {
+      "pla_code": 9,
+      "pla_name": " 2",
+      "club_code": 4
+    },
+    {
+      "pla_code": 10,
+      "pla_name": " 3",
+      "club_code": 4
+    },
+    {
+      "pla_code": 32,
+      "pla_name": "1",
+      "club_code": 5
+    },
+    {
+      "pla_code": 19,
+      "pla_name": " 6",
+      "club_code": 7
+    },
+    {
+      "pla_code": 20,
+      "pla_name": " 7",
+      "club_code": 7
+    },
+    {
+      "pla_code": 31,
+      "pla_name": "2",
+      "club_code": 5
+    },
+    {
+      "pla_code": 1,
+      "pla_name": "مبنى أ",
+      "club_code": 1
+    },
+    {
+      "pla_code": 14,
+      "pla_name": " عماره رقم4السيت",
+      "club_code": 3
+    },
+    {
+      "pla_code": 15,
+      "pla_name": "عماره رقم 5الثلاثاء",
+      "club_code": 3
+    },
+    {
+      "pla_code": 16,
+      "pla_name": "عماره رقم 6السبت",
+      "club_code": 3
+    },
+    {
+      "pla_code": 17,
+      "pla_name": "عماره رقم7 الثلاثاء",
+      "club_code": 3
+    },
+    {
+      "pla_code": 18,
+      "pla_name": "عماره رقم 8السبت",
+      "club_code": 3
+    },
+    {
+      "pla_code": 21,
+      "pla_name": "1",
+      "club_code": 8
+    },
+    {
+      "pla_code": 22,
+      "pla_name": "2",
+      "club_code": 8
+    },
+    {
+      "pla_code": 23,
+      "pla_name": "3",
+      "club_code": 8
+    },
+    {
+      "pla_code": 24,
+      "pla_name": "4",
+      "club_code": 8
+    },
+    {
+      "pla_code": 25,
+      "pla_name": "5",
+      "club_code": 8
+    },
+    {
+      "pla_code": 26,
+      "pla_name": "6",
+      "club_code": 8
+    },
+    {
+      "pla_code": 27,
+      "pla_name": "7",
+      "club_code": 8
+    },
+    {
+      "pla_code": 28,
+      "pla_name": "8",
+      "club_code": 8
+    },
+    {
+      "pla_code": 29,
+      "pla_name": "9",
+      "club_code": 8
+    },
+    {
+      "pla_code": 30,
+      "pla_name": "10",
+      "club_code": 8
+    },
+    {
+      "pla_code": 2,
+      "pla_name": "عمار رقم 1الثلاثاء",
+      "club_code": 3
+    },
+    {
+      "pla_code": 3,
+      "pla_name": "عماره رقم 2السبت",
+      "club_code": 3
+    }
+  ]
+}

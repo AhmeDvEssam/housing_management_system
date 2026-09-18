@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<form action="" method="post">
+  {% csrf_token %}
+  {{ queryset.management_form }}
+  {% for obj in queryset %}
+  <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
+  {% endfor %}
+  
+  <input type="hidden" name="action" value="allocate_units">
+  
+  <div style="margin-bottom: 20px;">
+    <h3>سيتم تخصيص الوحدات التالية:</h3>
+    <ul>
+      {% for obj in queryset %}
+      <li>{{ obj.unit_no }} - {{ obj.floor.building.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="allocation_type" style="display: block; font-weight: bold; margin-bottom: 5px;">نوع المخصص:</label>
+    <select name="allocation_type" id="allocation_type" required style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 300px;">
+      <option value="">-- اختر --</option>
+      {% for code, label in allocation_types %}
+      <option value="{{ code }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  
+  <div style="margin-bottom: 20px;">
+    <label for="allocated_to" style="display: block; font-weight: bold; margin-bottom: 5px;">الجهة المخصص لها (اختياري):</label>
+    <input type="text" name="allocated_to" id="allocated_to" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 300px;">
+  </div>
+  
+  <input type="submit" name="apply" value="تأكيد التخصيص" style="background-color: #0ea5e9; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+  <a href="#" onclick="window.history.back(); return false;" style="margin-right: 10px; color: #64748b;">إلغاء</a>
+</form>
+{% endblock %}

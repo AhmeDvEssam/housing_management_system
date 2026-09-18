@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+
+{% block userlinks %}
+    {% if request.META.HTTP_REFERER %}
+    <a href="javascript:history.back()" style="font-weight: bold; font-size: 16px; margin-left: 15px; text-decoration: none; display: inline-flex; align-items: center;" title="رجوع">
+        &#8594;
+    </a>
+    {% else %}
+    <a href="javascript:history.back()" style="font-weight: bold; font-size: 16px; margin-left: 15px; text-decoration: none; display: inline-flex; align-items: center;" title="رجوع">
+        &#8594;
+    </a>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

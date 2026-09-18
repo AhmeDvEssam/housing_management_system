@@ -1,0 +1,457 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .bp-container { padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); direction: rtl; font-family: 'Tajawal', sans-serif; }
+        .bp-section { margin-bottom: 20px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+        .bp-header { background: #f5f5f5; padding: 12px 15px; font-weight: bold; font-size: 16px; border-bottom: 1px solid #e0e0e0; color: #333; }
+        
+        .bp-tree { padding: 15px; }
+        .bp-node { margin-bottom: 10px; border: 1px solid #e3f2fd; border-radius: 4px; overflow: hidden; }
+        .bp-node-header { display: flex; align-items: center; padding: 10px; background: #e3f2fd; cursor: pointer; gap: 10px; }
+        .bp-node-content { padding: 10px 10px 10px 30px; display: none; background: #fafafa; border-top: 1px solid #e3f2fd; }
+        .bp-node.open > .bp-node-content, 
+        .bp-building-node.open > .bp-node-content, 
+        .bp-type-node.open > .bp-node-content,
+        .bp-cls-node.open > .bp-node-content { display: block; }
+        
+        .bp-building-node { border: 1px solid #e8f5e9; margin-bottom: 8px; border-radius: 4px; }
+        .bp-building-header { display: flex; align-items: center; padding: 8px; background: #e8f5e9; cursor: pointer; gap: 8px; }
+        
+        .bp-cls-node { border: 1px solid #fff3e0; margin-bottom: 6px; border-radius: 4px; margin-right: 20px; }
+        .bp-cls-header { display: flex; align-items: center; padding: 6px; background: #fff3e0; cursor: pointer; gap: 6px; }
+        
+        .bp-unit-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin-right: 20px; }
+        .bp-unit-lbl { background: white; border: 1px solid #ccc; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; }
+        .bp-unit-lbl:hover { background: #f0f0f0; }
+        
+        .bp-months-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; }
+        .bp-month-lbl { background: white; border: 1px solid #90caf9; padding: 6px 15px; border-radius: 20px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        
+        .bp-price-grid { display: flex; flex-direction: column; gap: 10px; padding: 15px; }
+        .bp-price-row { display: flex; align-items: center; gap: 15px; background: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px solid #eee; }
+        .bp-price-row input[type="number"] { padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 150px; }
+        .bp-price-row input:disabled { background: #eee; cursor: not-allowed; }
+        
+        /* Hide original form - completely remove from flow */
+        #pricingrule_form > div > fieldset { display: none !important; }
+        .submit-row { margin-top: 20px; }
+        
+        /* Fix RTL scroll bug - prevent any horizontal overflow */
+        .content-wrapper, #content, .container-fluid, #pricingrule_form {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+        }
+        
+        .toggle-icon { width: 20px; text-align: center; font-weight: bold; color: #666; transition: 0.2s; }
+        .bp-node.open > .bp-node-header > .toggle-icon,
+        .bp-building-node.open > .bp-building-header > .toggle-icon,
+        .bp-type-node.open > .bp-type-header > .toggle-icon,
+        .bp-cls-node.open > .bp-cls-header > .toggle-icon { transform: rotate(90deg); }
+    </style>
+    <script>
+        // Fix RTL scroll bug - reset scroll on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.scrollLeft = 0;
+            document.body.scrollLeft = 0;
+            window.scrollTo({left: 0, top: 0});
+        });
+    </script>
+{% endblock %}
+
+{% block field_sets %}
+    <!-- Keep original fields hidden but in DOM for form submission -->
+    <div id="django-hidden-fields" style="display:none !important;">
+        {% for fieldset in adminform %}
+            {% include "admin/includes/fieldset.html" %}
+        {% endfor %}
+    </div>
+
+    <div class="bp-container" id="bp-app">
+        <h2 style="margin-top:0; color:#1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">نظام التسعير المجمع الهرمي</h2>
+        <p>قم بتحديد المستويات المراد تسعيرها (نوادي، عمارات، تصنيفات، وحدات). تحديد المربع المجاور لأي مستوى يعني تطبيق السعر عليه بالكامل.</p>
+
+        <div id="bp-errors" style="display:none; background:#ffebee; color:#c62828; padding:15px; border-radius:4px; margin-bottom:20px; font-weight:bold; border:1px solid #ef9a9a;">
+            <strong>الرجاء تصحيح الأخطاء التالية:</strong>
+            <ul id="bp-errors-list" style="margin-top:10px; margin-bottom:0;"></ul>
+        </div>
+
+        <script>
+            // Extract errors from hidden django form
+            window.addEventListener('DOMContentLoaded', () => {
+                let errorList = document.getElementById('bp-errors-list');
+                let hasErrors = false;
+                
+                // Form wide errors
+                document.querySelectorAll('.errornote').forEach(el => {
+                    hasErrors = true;
+                });
+
+                // Field specific errors
+                document.querySelectorAll('.errorlist li').forEach(el => {
+                    let li = document.createElement('li');
+                    li.innerText = el.innerText;
+                    errorList.appendChild(li);
+                    hasErrors = true;
+                });
+
+                if(hasErrors) {
+                    document.getElementById('bp-errors').style.display = 'block';
+                    // Scroll to error box instead of 0,0 which breaks in RTL
+                    setTimeout(() => {
+                        document.getElementById('bp-errors').scrollIntoView({behavior: 'smooth', block: 'start'});
+                    }, 100);
+                }
+            });
+        </script>
+
+        <!-- 1. Prices -->
+        <div class="bp-section">
+            <div class="bp-header">1. تحديد الأسعار الأساسية (في الليلة)</div>
+            <div class="bp-price-grid">
+                <div class="bp-price-row">
+                    <input type="checkbox" id="cb_military" onchange="togglePrice('military')">
+                    <label style="width: 120px; font-weight:bold;">عسكري:</label>
+                    <input type="number" id="inp_military" disabled placeholder="السعر هنا...">
+                </div>
+                <div class="bp-price-row">
+                    <input type="checkbox" id="cb_family" onchange="togglePrice('family')">
+                    <label style="width: 120px; font-weight:bold;">عضوية عائلية:</label>
+                    <input type="number" id="inp_family" disabled placeholder="السعر هنا...">
+                </div>
+                <div class="bp-price-row">
+                    <input type="checkbox" id="cb_civilian_af" onchange="togglePrice('civilian_af')">
+                    <label style="width: 120px; font-weight:bold;">مدني ق.م:</label>
+                    <input type="number" id="inp_civilian_af" disabled placeholder="السعر هنا...">
+                </div>
+                <div class="bp-price-row">
+                    <input type="checkbox" id="cb_civilian" onchange="togglePrice('civilian')">
+                    <label style="width: 120px; font-weight:bold;">مدني عام:</label>
+                    <input type="number" id="inp_civilian" disabled placeholder="السعر هنا...">
+                </div>
+                <small style="color:#d32f2f; margin-top:5px;">* إضافة الـ 50% سيتم حسابها وتقريبها تلقائياً وقت الحجز.</small>
+            </div>
+        </div>
+
+        <!-- 2. Months -->
+        <div class="bp-section">
+            <div class="bp-header">2. تحديد الأشهر المطبق عليها (اختياري)</div>
+            <div class="bp-months-grid" id="months-grid">
+                <script>
+                    for(let i=1; i<=12; i++) {
+                        document.write(`<label class="bp-month-lbl"><input type="checkbox" class="cb-month" value="${i}"> شهر ${i}</label>`);
+                    }
+                </script>
+            </div>
+            <div style="padding: 0 15px 15px;"><small style="color:#666;">إذا لم يتم اختيار أي شهر، سيتم تطبيق السعر طوال العام.</small></div>
+        </div>
+
+        <!-- 3. Hierarchy -->
+        <div class="bp-section">
+            <div class="bp-header">3. شجرة الأماكن المطبق عليها (النوادي / العمارات / التصنيفات / الوحدات)</div>
+            <div class="bp-tree" id="tree-root">
+                <span style="color:#999;">جاري تحميل شجرة الأماكن... برجاء الانتظار.</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Sync logic before submit
+        document.getElementById('pricingrule_form').addEventListener('submit', function(e) {
+            try {
+                // 1. Sync Prices
+                let pMil = document.getElementById('inp_military').value;
+                let pFam = document.getElementById('inp_family').value;
+                let pCivAf = document.getElementById('inp_civilian_af').value;
+                let pCiv = document.getElementById('inp_civilian').value;
+
+                document.getElementById('id_price_military').value = (document.getElementById('cb_military').checked && pMil) ? pMil : 0;
+                document.getElementById('id_price_family').value = (document.getElementById('cb_family').checked && pFam) ? pFam : 0;
+                document.getElementById('id_price_civilian_af').value = (document.getElementById('cb_civilian_af').checked && pCivAf) ? pCivAf : 0;
+                document.getElementById('id_price_civilian').value = (document.getElementById('cb_civilian').checked && pCiv) ? pCiv : 0;
+
+                // 2. Sync Months
+                let months = Array.from(document.querySelectorAll('.cb-month:checked')).map(cb => cb.value);
+                document.getElementById('id_months').value = months.join(',');
+
+                // 3. Sync Hierarchy - ONLY from CHECKED buildings
+                let clubs = Array.from(document.querySelectorAll('.cb-club:checked')).map(cb => cb.value);
+                let buildings = Array.from(document.querySelectorAll('.cb-building:checked')).map(cb => cb.value);
+                
+                let clsSet = new Set();
+                let typSet = new Set();
+                let unitArr = [];
+                
+                document.querySelectorAll('.cb-building:checked').forEach(bCb => {
+                    let bNode = bCb.closest('.bp-building-node');
+                    if(bNode) {
+                        // Collect from CHECKED classifications only
+                        bNode.querySelectorAll('.cb-cls:checked').forEach(clsCb => {
+                            clsSet.add(clsCb.value);
+                            let clsNode = clsCb.closest('.bp-cls-node');
+                            if(clsNode) {
+                                clsNode.querySelectorAll('.cb-type:checked').forEach(cb => typSet.add(cb.value));
+                                clsNode.querySelectorAll('.cb-unit:checked').forEach(cb => unitArr.push(cb.value));
+                            }
+                        });
+                    }
+                });
+                
+                let classifications = [...clsSet];
+                let types = [...typSet];
+                let units = unitArr;
+
+                let selectClubs = document.getElementById('id_clubs');
+                let selectBuildings = document.getElementById('id_buildings');
+                let selectUnits = document.getElementById('id_units');
+
+                if(selectClubs) Array.from(selectClubs.options).forEach(opt => opt.selected = clubs.includes(opt.value));
+                if(selectBuildings) Array.from(selectBuildings.options).forEach(opt => opt.selected = buildings.includes(opt.value));
+                if(selectUnits) Array.from(selectUnits.options).forEach(opt => opt.selected = units.includes(opt.value));
+
+                if(window.jQuery) {
+                    if(selectClubs) jQuery(selectClubs).val(clubs).trigger('change');
+                    if(selectBuildings) jQuery(selectBuildings).val(buildings).trigger('change');
+                    if(selectUnits) jQuery(selectUnits).val(units).trigger('change');
+                }
+
+                let clsField = document.getElementById('id_classifications');
+                if(clsField) clsField.value = classifications.join(',');
+                
+                let typeField = document.getElementById('id_unit_types');
+                if(typeField) typeField.value = types.join(',');
+            } catch(err) {
+                console.error("Error during form submit sync: ", err);
+            }
+        });
+
+        function togglePrice(type) {
+            let cb = document.getElementById('cb_' + type);
+            let inp = document.getElementById('inp_' + type);
+            inp.disabled = !cb.checked;
+            if(cb.checked) inp.focus();
+        }
+
+        // Tree Logic
+        function toggleNode(el) {
+            let node = el.parentElement;
+            node.classList.toggle('open');
+        }
+
+        // Prevent checkbox clicks from triggering the accordion toggle
+        document.getElementById('tree-root').addEventListener('click', function(e) {
+            if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
+                e.stopPropagation();
+            }
+        });
+
+        // Tree Checkbox Logic via Event Delegation
+        document.getElementById('tree-root').addEventListener('change', function(e) {
+            if (e.target.tagName !== 'INPUT' || e.target.type !== 'checkbox') return;
+            
+            let isChecked = e.target.checked;
+            let targetCb = e.target;
+            
+            // 1. "Select All" logic
+            if (targetCb.classList.contains('cb-select-all')) {
+                let parentContentNode = targetCb.closest('.bp-node-content');
+                if (!parentContentNode) {
+                    // Fallback for club level select all which is directly inside bp-node-content
+                    parentContentNode = targetCb.parentElement.parentElement;
+                }
+                
+                if (parentContentNode) {
+                    let childCbs = parentContentNode.querySelectorAll('input[type="checkbox"]:not(.cb-select-all)');
+                    childCbs.forEach(cb => cb.checked = isChecked);
+                }
+            } 
+            
+            let node = targetCb.closest('.bp-node, .bp-building-node, .bp-cls-node, .bp-type-node');
+            
+            if (isChecked) {
+                // Open the node visually
+                if (node && !targetCb.classList.contains('cb-select-all') && !targetCb.classList.contains('cb-unit')) {
+                    node.classList.add('open');
+                }
+                
+                // Hierarchical CHECK: auto-check parents
+                // Start from the content div that contains this checkbox
+                let currentContent = targetCb.closest('.bp-node-content');
+                
+                while (currentContent) {
+                    let parentContainer = currentContent.parentElement;
+                    if (parentContainer) {
+                        // The header is always the first child of the node container
+                        let headerDiv = parentContainer.children[0];
+                        if (headerDiv && headerDiv.tagName === 'DIV') {
+                            let headerCb = headerDiv.querySelector('input[type="checkbox"]');
+                            if (headerCb && !headerCb.checked) {
+                                headerCb.checked = true;
+                            }
+                        }
+                    }
+                    // Move up to the next parent content div
+                    currentContent = parentContainer ? parentContainer.closest('.bp-node-content') : null;
+                }
+            } else {
+                // Hierarchical UNCHECK: uncheck all children when parent is unchecked
+                if (node && !targetCb.classList.contains('cb-select-all') && !targetCb.classList.contains('cb-unit')) {
+                    // Find the content div inside this node
+                    let contentNode = null;
+                    for (let i = 0; i < node.children.length; i++) {
+                        if (node.children[i].classList.contains('bp-node-content')) {
+                            contentNode = node.children[i];
+                            break;
+                        }
+                    }
+                    
+                    if (contentNode) {
+                        let childCbs = contentNode.querySelectorAll('input[type="checkbox"]');
+                        childCbs.forEach(cb => cb.checked = false);
+                    }
+                }
+            }
+        });
+
+        // Load original values if editing
+        function loadOriginalValues() {
+            // Prices
+            let pMil = document.getElementById('id_price_military').value;
+            if(pMil > 0) { document.getElementById('cb_military').checked = true; document.getElementById('inp_military').value = pMil; togglePrice('military'); }
+            
+            let pFam = document.getElementById('id_price_family').value;
+            if(pFam > 0) { document.getElementById('cb_family').checked = true; document.getElementById('inp_family').value = pFam; togglePrice('family'); }
+            
+            let pCivAf = document.getElementById('id_price_civilian_af').value;
+            if(pCivAf > 0) { document.getElementById('cb_civilian_af').checked = true; document.getElementById('inp_civilian_af').value = pCivAf; togglePrice('civilian_af'); }
+            
+            let pCiv = document.getElementById('id_price_civilian').value;
+            if(pCiv > 0) { document.getElementById('cb_civilian').checked = true; document.getElementById('inp_civilian').value = pCiv; togglePrice('civilian'); }
+
+            // Months
+            let monthsStr = document.getElementById('id_months').value;
+            if(monthsStr) {
+                let months = monthsStr.split(',');
+                document.querySelectorAll('.cb-month').forEach(cb => {
+                    if(months.includes(cb.value)) cb.checked = true;
+                });
+            }
+        }
+
+        function renderTree(data) {
+            let root = document.getElementById('tree-root');
+            root.innerHTML = '';
+
+            // Get selected from django hidden fields
+            let selectedClubs = Array.from(document.getElementById('id_clubs').options).filter(o=>o.selected).map(o=>o.value);
+            let selectedBldgs = Array.from(document.getElementById('id_buildings').options).filter(o=>o.selected).map(o=>o.value);
+            let selectedUnits = Array.from(document.getElementById('id_units').options).filter(o=>o.selected).map(o=>o.value);
+            let selectedCls = document.getElementById('id_classifications').value.split(',');
+            let selectedTypes = document.getElementById('id_unit_types').value.split(',');
+
+            data.clubs.forEach(c => {
+                let cNode = document.createElement('div');
+                cNode.className = 'bp-node';
+                let cChecked = selectedClubs.includes(c.id.toString()) ? 'checked' : '';
+                
+                let bHtml = '';
+                c.buildings.forEach(b => {
+                    let bChecked = selectedBldgs.includes(b.id.toString()) ? 'checked' : '';
+                    let isBldgSelected = selectedBldgs.includes(b.id.toString());
+                    
+                    let clsHtml = '';
+                    b.classifications.forEach(cls => {
+                        // Only pre-check classification if THIS building is selected
+                        let isClsSelected = isBldgSelected && selectedCls.includes(cls.name);
+                        let clsChecked = isClsSelected ? 'checked' : '';
+                        
+                        let typesHtml = '';
+                        cls.unit_types.forEach(ut => {
+                            // Only pre-check type if parent classification AND building are selected
+                            let utChecked = (isClsSelected && selectedTypes.includes(ut.code)) ? 'checked' : '';
+                            let uHtml = '';
+                            
+                            if (ut.units.length > 0) {
+                                uHtml += `<label class="bp-unit-lbl" style="background:#e0e0e0;"><input type="checkbox" class="cb-select-all" > <b>تحديد كل الوحدات</b></label>`;
+                            } else {
+                                uHtml += `<span style="color:#999; font-size:13px; padding:5px;">لا توجد وحدات</span>`;
+                            }
+                            
+                            ut.units.forEach(u => {
+                                let uChecked = selectedUnits.includes(u.id.toString()) ? 'checked' : '';
+                                uHtml += `<label class="bp-unit-lbl"><input type="checkbox" class="cb-unit" value="${u.id}" ${uChecked}> ${u.name}</label>`;
+                            });
+                            
+                            typesHtml += `
+                                <div class="bp-type-node" style="margin-bottom:10px; border:1px solid #e0e0e0; border-radius:4px;">
+                                    <div class="bp-type-header" onclick="toggleNode(this)" style="display:flex; align-items:center; padding:6px; background:#fafafa; cursor:pointer; gap:6px;">
+                                        <div class="toggle-icon">▶</div>
+                                        <input type="checkbox" class="cb-type" value="${ut.code}"  ${utChecked}>
+                                        <strong style="color:#795548;">نوع الوحدة: ${ut.name}</strong>
+                                    </div>
+                                    <div class="bp-node-content bp-unit-grid">${uHtml}</div>
+                                </div>
+                            `;
+                        });
+
+                        clsHtml += `
+                            <div class="bp-cls-node">
+                                <div class="bp-cls-header" onclick="toggleNode(this)">
+                                    <div class="toggle-icon">▶</div>
+                                    <input type="checkbox" class="cb-cls" value="${cls.name}"  ${clsChecked}>
+                                    <strong style="color:#e65100;">تصنيف: ${cls.name}</strong>
+                                </div>
+                                <div class="bp-node-content">
+                                    <label style="margin-bottom:10px; display:inline-block; cursor:pointer;"><input type="checkbox" class="cb-select-all" > <b>تحديد كل الأنواع</b></label>
+                                    ${typesHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    bHtml += `
+                        <div class="bp-building-node">
+                            <div class="bp-building-header" onclick="toggleNode(this)">
+                                <div class="toggle-icon">▶</div>
+                                <input type="checkbox" class="cb-building" value="${b.id}"  ${bChecked}>
+                                <strong style="color:#2e7d32;">${b.name}</strong>
+                            </div>
+                            <div class="bp-node-content">
+                                <label style="margin-bottom:10px; display:inline-block; cursor:pointer;"><input type="checkbox" class="cb-select-all" > <b>تحديد كل التصنيفات</b></label>
+                                ${clsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                cNode.innerHTML = `
+                    <div class="bp-node-header" onclick="toggleNode(this)">
+                        <div class="toggle-icon">▶</div>
+                        <input type="checkbox" class="cb-club" value="${c.id}"  ${cChecked}>
+                        <strong style="color:#1565c0; font-size:16px;">${c.name}</strong>
+                    </div>
+                    <div class="bp-node-content">
+                        <label style="margin-bottom:10px; display:inline-block; cursor:pointer;"><input type="checkbox" class="cb-select-all" > <b>تحديد كل العمارات</b></label>
+                        ${bHtml}
+                    </div>
+                `;
+                root.appendChild(cNode);
+            });
+        }
+
+        // Fetch hierarchy
+        fetch('/admin/inventory/pricingrule/get-hierarchy/')
+            .then(res => res.json())
+            .then(data => {
+                renderTree(data);
+                loadOriginalValues();
+            })
+            .catch(err => {
+                document.getElementById('tree-root').innerHTML = '<span style="color:red;">حدث خطأ أثناء تحميل البيانات!</span>';
+                console.error(err);
+            });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,842 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}لوحة التحليلات المتقدمة | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+<style>
+    /* CSS Variables for Theming */
+    :root {
+        --bg-main: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --primary-color: #0284c7;
+        --success-color: #16a34a;
+        --danger-color: #dc2626;
+        --warning-color: #d97706;
+        --accent-color: #4f46e5;
+    }
+    body.dark-mode {
+        --bg-main: #0f172a;
+        --card-bg: #1e293b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --primary-color: #38bdf8;
+        --success-color: #4ade80;
+        --danger-color: #f87171;
+        --warning-color: #fbbf24;
+        --accent-color: #818cf8;
+    }
+
+    body {
+        background-color: var(--bg-main);
+        color: var(--text-main);
+        font-family: 'Tajawal', sans-serif;
+    }
+
+    .content-wrapper {
+        background-color: var(--bg-main) !important;
+        transition: background-color 0.3s;
+    }
+    
+    .analytics-container {
+        padding: 20px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header-actions button {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: bold;
+    }
+    .header-actions button:hover {
+        background: var(--border-color);
+    }
+    
+    /* Tabs */
+    .tabs-nav {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+    .tabs-nav button {
+        padding: 10px 20px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s;
+    }
+    .tabs-nav button.active {
+        color: var(--primary-color);
+        border-bottom: 4px solid var(--primary-color);
+    }
+    
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* View Toggle inside Dashboard */
+    .view-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .view-toggle button {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid var(--primary-color);
+        background: transparent;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .view-toggle button.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    /* Filters (Collapsible) */
+    .filters-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .filters-header {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .filters-body {
+        padding: 0 20px 20px 20px;
+        display: block;
+    }
+    .filters-body.collapsed {
+        display: none;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    .filter-group { display: flex; flex-direction: column; }
+    .filter-group label { font-weight: bold; margin-bottom: 5px; color: var(--text-muted); }
+    .filter-group select, .filter-group input {
+        padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);
+        background: var(--bg-main); color: var(--text-main); font-weight: bold;
+    }
+
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 20px;
+    }
+
+    /* KPI Tree Styles */
+    .tree-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        
+        
+    }
+    .tree-node { margin-bottom: 8px; }
+    .tree-label {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 15px; background: var(--bg-main); border: 1px solid var(--border-color);
+        border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s;
+    }
+    .tree-label:hover { background: var(--border-color); }
+    .tree-label .badge {
+        background: var(--primary-color); color: #fff; padding: 4px 10px;
+        border-radius: 12px; font-size: 0.9em;
+    }
+    .tree-children {
+        padding-right: 20px; margin-top: 8px; display: none;
+        border-right: 2px dashed var(--border-color);
+    }
+    .tree-children.active { display: block; }
+    .leaf-node {
+        display: flex; justify-content: space-between; padding: 8px 15px;
+        color: var(--text-muted); border-bottom: 1px solid var(--border-color); font-weight: bold;
+    }
+
+    /* Charts Area */
+    .charts-area { display: flex; flex-direction: column; gap: 20px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .kpi-row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    
+    .kpi-box {
+        background: var(--card-bg); padding: 20px; border-radius: 12px;
+        border: 1px solid var(--border-color); text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .kpi-box h3 { color: var(--text-muted); font-size: 1rem; margin-bottom: 10px; }
+    .kpi-box .value { font-size: 1.8rem; font-weight: bold; color: var(--primary-color); }
+
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .chart-box {
+        background: var(--card-bg); padding: 20px; border-radius: 12px;
+        border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        min-height: 350px;
+    }
+    .chart-box h4 {
+        margin-bottom: 15px; color: var(--text-main); font-weight: bold; text-align: center;
+        background: var(--bg-main); padding: 8px; border-radius: 8px;
+    }
+
+    .fullscreen-mode {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
+        background: var(--bg-main);  padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container" id="analytics-container">
+    <div class="dashboard-header">
+        <h2>📊 المنظومة التحليلية الشاملة</h2>
+        <div class="header-actions">
+            <button onclick="toggleDarkMode()"><i class="fas fa-moon"></i> المظهر</button>
+            <button onclick="toggleFullScreen()"><i class="fas fa-expand"></i> ملء الشاشة</button>
+            <button onclick="fetchData()" style="background: var(--primary-color); color: white; border: none;">
+                <i class="fas fa-sync-alt"></i> تحديث البيانات
+            </button>
+        </div>
+    </div>
+    
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+        <button class="active" onclick="switchMainTab('dashboard', this)"><i class="fas fa-chart-pie"></i> لوحة القيادة التفاعلية</button>
+        <button onclick="switchMainTab('temporal', this)"><i class="fas fa-history"></i> التحليل الزمني (مقارنات سنوية)</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filters-header" onclick="toggleFilters()">
+            <span><i class="fas fa-filter"></i> فلاتر البحث والتحكم</span>
+            <i class="fas fa-chevron-up" id="filters-chevron"></i>
+        </div>
+        <div class="filters-body" id="filters-body">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>السنة</label>
+                    <select id="year">
+                        <option value="all">الكل</option>
+                        {% for y in years %}
+                        <option value="{{ y }}">{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>الشهر</label>
+                    <select id="month">
+                        <option value="all">الكل</option>
+                        <option value="1">يناير</option>
+                        <option value="2">فبراير</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أبريل</option>
+                        <option value="5">مايو</option>
+                        <option value="6">يونيو</option>
+                        <option value="7">يوليو</option>
+                        <option value="8">أغسطس</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="start_date">
+                </div>
+                <div class="filter-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="end_date">
+                </div>
+                <div class="filter-group">
+                    <label>النادي</label>
+                    <select id="club_id">
+                        <option value="all">الكل</option>
+                        {% for c in clubs %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>التصنيف</label>
+                    <select id="classification_id">
+                        <option value="all">الكل</option>
+                        {% for cls in classifications %}
+                        <option value="{{ cls }}">{{ cls }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>نوع الحجز</label>
+                    <select id="booking_type">
+                        <option value="all">الكل</option>
+                        {% for k, v in booking_types %}
+                        <option value="{{ k }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>نوع الشخص</label>
+                    <select id="person_type">
+                        <option value="all">الكل</option>
+                        {% for k, v in person_types %}
+                        <option value="{{ k }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>الفوج / الأسبوع</label>
+                    <select id="period_id">
+                        <option value="all">الكل</option>
+                        {% for p in periods %}
+                        <option value="{{ p.id }}">{{ p.name }} ({{ p.start_date|date:"Y-m-d" }} إلى {{ p.end_date|date:"Y-m-d" }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group" style="justify-content: flex-end;">
+                    <button onclick="clearFilters()" style="background: #f43f5e; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; height: 38px;">
+                        <i class="fas fa-times-circle"></i> إلغاء الفلاتر
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 1: Dashboard -->
+    <div id="tab-dashboard" class="tab-content active">
+        <div class="view-toggle">
+            <button id="btn-count" class="active" onclick="setViewMode('count')"><i class="fas fa-users"></i> تركيز على أعداد الحجوزات</button>
+            <button id="btn-rev" onclick="setViewMode('rev')"><i class="fas fa-money-bill-wave"></i> تركيز على الإيرادات (ج.م)</button>
+        </div>
+
+        <div class="main-grid">
+            <!-- Tree View -->
+            <div class="tree-card" id="kpi-tree">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- Charts & KPIs -->
+            <div class="charts-area">
+                
+                <div class="kpi-row">
+                    <div class="kpi-box">
+                        <h3>إجمالي الحجوزات</h3>
+                        <div class="value" id="kpi-total-bookings">0</div>
+                    </div>
+                    <div class="kpi-box" style="border-bottom: 4px solid var(--success-color);">
+                        <h3>إجمالي الإيرادات المؤكدة (ج.م)</h3>
+                        <div class="value" id="kpi-total-paid-revenue" style="color: var(--success-color);">0</div>
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 5px;" id="kpi-total-revenue-hint"></div>
+                    </div>
+                    <div class="kpi-box">
+                        <h3>أعلى نادي</h3>
+                        <div class="value" id="kpi-top-club" style="font-size: 1.5rem;">-</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 10px; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">طرق الدفع</h3>
+                <div class="kpi-row-4">
+                    <div class="kpi-box" style="border-left: 4px solid #10b981;">
+                        <h3>إيرادات فيزا</h3>
+                        <div class="value" id="kpi-pay-visa">0</div>
+                    </div>
+                    <div class="kpi-box" style="border-left: 4px solid #3b82f6;">
+                        <h3>إيرادات توريد بنكي</h3>
+                        <div class="value" id="kpi-pay-bank">0</div>
+                    </div>
+                    <div class="kpi-box" style="border-left: 4px solid #f43f5e;">
+                        <h3>إيرادات لم تسدد</h3>
+                        <div class="value" id="kpi-pay-unpaid">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-box">
+                        <h4 id="chartTitleMain">نسبة الإيرادات (عادي / قرعة / مخصصات)</h4>
+                        <div id="bookingTypeChart"></div>
+                    </div>
+                    <div class="chart-box" id="clubChartContainer">
+                        <h4 id="clubChartTitle">توزيع الأندية</h4>
+                        <div id="clubRevenueChart"></div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-box">
+                        <h4>توزيع فئات الأعضاء (عسكري / مدني)</h4>
+                        <div id="personTypeChart"></div>
+                    </div>
+                    <div class="chart-box">
+                        <h4>توزيع القرعة (مؤكد / غير مؤكد)</h4>
+                        <div id="lotteryChart"></div>
+                    </div>
+                </div>
+                
+                <div class="chart-row" style="grid-template-columns: 1fr;">
+                    <div class="chart-box">
+                        <h4>تفاصيل الجيوش والمناطق (عسكري)</h4>
+                        <div id="armyRegionChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Temporal Analysis -->
+    <div id="tab-temporal" class="tab-content">
+        <div class="chart-row" style="grid-template-columns: 1fr;">
+            <div class="chart-box">
+                <h4>مقارنة الإيرادات والحجوزات (شهرياً لجميع السنوات)</h4>
+                <div id="temporalTrendChart"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="{% static 'js/apexcharts.min.js' %}"></script>
+<script>
+    // Global State
+    let currentData = null;
+    let currentViewMode = 'count'; // 'count' or 'rev'
+    const treeContainer = document.getElementById('kpi-tree');
+    let charts = {};
+
+    function switchMainTab(tabId, btn) {
+        document.querySelectorAll('.tabs-nav button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        if (currentData) {
+            // Trigger chart resize
+            window.dispatchEvent(new Event('resize'));
+        }
+    }
+
+    function toggleFilters() {
+        const body = document.getElementById('filters-body');
+        const icon = document.getElementById('filters-chevron');
+        body.classList.toggle('collapsed');
+        if (body.classList.contains('collapsed')) {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    }
+
+    function setViewMode(mode) {
+        currentViewMode = mode;
+        document.getElementById('btn-count').classList.toggle('active', mode === 'count');
+        document.getElementById('btn-rev').classList.toggle('active', mode === 'rev');
+        if (currentData) {
+            renderTree(currentData.tree);
+            renderCharts(currentData);
+        }
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        const theme = isDark ? 'dark' : 'light';
+        Object.values(charts).forEach(c => c.updateOptions({ theme: { mode: theme } }));
+    }
+
+    function toggleFullScreen() {
+        const elem = document.getElementById('analytics-container');
+        if (!document.fullscreenElement) {
+            elem.classList.add('fullscreen-mode');
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            elem.classList.remove('fullscreen-mode');
+        }
+    }
+    
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            document.getElementById('analytics-container').classList.remove('fullscreen-mode');
+        }
+    });
+
+    function toggleNode(el) {
+        const children = el.nextElementSibling;
+        if (children && children.classList.contains('tree-children')) {
+            children.classList.toggle('active');
+            const icon = el.querySelector('i.fa-chevron-left, i.fa-chevron-down');
+            if (icon) {
+                if (children.classList.contains('active')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-left');
+                }
+            }
+        }
+    }
+
+    function formatCurrency(val) {
+        return new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumFractionDigits: 0 }).format(val || 0);
+    }
+    
+    function formatShortCurrency(val) {
+        if (!val) return '0';
+        if (Math.abs(val) >= 1000000) {
+            return (val / 1000000).toFixed(1) + ' مليون ج.م';
+        } else if (Math.abs(val) >= 1000) {
+            return (val / 1000).toFixed(0) + ' ألف ج.م';
+        }
+        return formatCurrency(val);
+    }
+
+    function val(node) {
+        if (!node) return 0;
+        if (currentViewMode === 'count') {
+            return new Intl.NumberFormat('ar-EG').format(node.c || 0);
+        } else {
+            return formatCurrency(node.r || 0);
+        }
+    }
+
+    function renderTree(tree) {
+        let armiesHtml = '';
+        if (tree.armies.list && Object.keys(tree.armies.list).length > 0) {
+            for (const [army, nodeData] of Object.entries(tree.armies.list)) {
+                armiesHtml += `<div class="leaf-node"><span>${army}</span><span>${val(nodeData)}</span></div>`;
+            }
+        } else {
+            armiesHtml = `<div class="leaf-node"><span>لا يوجد تقسيمات مسجلة</span><span>0</span></div>`;
+        }
+
+        let totalText = currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(tree.total_bookings) : formatCurrency(tree.total_revenue);
+
+        let html = `
+        <div class="tree-node">
+            <div class="tree-label" style="background: var(--primary-color); color: white;" onclick="toggleNode(this)">
+                <span><i class="fas fa-globe"></i> إجمالي النظام</span>
+                <span class="badge" style="background: rgba(0,0,0,0.3);">${totalText}</span>
+            </div>
+            <div class="tree-children active">
+                
+                <!-- Standard Bookings -->
+                <div class="tree-node">
+                    <div class="tree-label" onclick="toggleNode(this)" style="background: rgba(2, 132, 199, 0.1);">
+                        <span><i class="fas fa-chevron-left"></i> الحجوزات العادية (أيام)</span>
+                        <span class="badge" style="background: #0284c7;">${val(tree.standard.t)}</span>
+                    </div>
+                    <div class="tree-children">
+                        <div class="leaf-node"><span>مدني عام</span><span>${val(tree.standard.civ)}</span></div>
+                        <div class="leaf-node"><span>عسكري</span><span>${val(tree.standard.mil)}</span></div>
+                        <div class="leaf-node"><span>عضوية عائلية</span><span>${val(tree.standard.fam)}</span></div>
+                        <div class="leaf-node"><span>شهيد</span><span>${val(tree.standard.mar)}</span></div>
+                        <div class="leaf-node"><span>محارب</span><span>${val(tree.standard.vet)}</span></div>
+                    </div>
+                </div>
+
+                <!-- Armies Bookings -->
+                <div class="tree-node">
+                    <div class="tree-label" onclick="toggleNode(this)" style="background: rgba(16, 185, 129, 0.1);">
+                        <span><i class="fas fa-chevron-left"></i> حجوزات الجيوش والمناطق</span>
+                        <span class="badge" style="background: #10b981;">${val(tree.armies.t)}</span>
+                    </div>
+                    <div class="tree-children">
+                        ${armiesHtml}
+                    </div>
+                </div>
+
+                <!-- Lottery Bookings -->
+                <div class="tree-node">
+                    <div class="tree-label" onclick="toggleNode(this)">
+                        <span><i class="fas fa-chevron-left"></i> القرعة</span>
+                        <span class="badge">${val(tree.lottery.t)}</span>
+                    </div>
+                    <div class="tree-children">
+                        <!-- Confirmed -->
+                        <div class="tree-node">
+                            <div class="tree-label" onclick="toggleNode(this)" style="background: rgba(74, 222, 128, 0.1);">
+                                <span><i class="fas fa-chevron-left"></i> قرعة مؤكدة (مدفوعة)</span>
+                                <span class="badge" style="background: var(--success-color);">${val(tree.lottery.confirmed.t)}</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="leaf-node"><span>عسكري</span><span>${val(tree.lottery.confirmed.mil)}</span></div>
+                                <div class="leaf-node"><span>عضوية عائلية</span><span>${val(tree.lottery.confirmed.fam)}</span></div>
+                            </div>
+                        </div>
+                        <!-- Unconfirmed -->
+                        <div class="tree-node">
+                            <div class="tree-label" onclick="toggleNode(this)" style="background: rgba(248, 113, 113, 0.1);">
+                                <span><i class="fas fa-chevron-left"></i> قرعة غير مؤكدة</span>
+                                <span class="badge" style="background: var(--danger-color);">${val(tree.lottery.unconfirmed.t)}</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="leaf-node"><span>عسكري</span><span>${val(tree.lottery.unconfirmed.mil)}</span></div>
+                                <div class="leaf-node"><span>عضوية عائلية</span><span>${val(tree.lottery.unconfirmed.fam)}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allocations -->
+                <div class="tree-node">
+                    <div class="tree-label" onclick="toggleNode(this)">
+                        <span><i class="fas fa-chevron-left"></i> المخصصات</span>
+                        <span class="badge" style="background: var(--warning-color);">${val(tree.allocations.t)}</span>
+                    </div>
+                    <div class="tree-children">
+                        <div class="leaf-node"><span>إسكان إداري</span><span>${val(tree.allocations.admin)}</span></div>
+                        <div class="leaf-node"><span>مخصصات القائد</span><span>${val(tree.allocations.commander)}</span></div>
+                        <div class="leaf-node"><span>إسكان شركات</span><span>${val(tree.allocations.corporate)}</span></div>
+                        <div class="leaf-node"><span>إسكان دائم عقود</span><span>${val(tree.allocations.permanent)}</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        `;
+        treeContainer.innerHTML = html;
+    }
+
+    function initChart(id, options) {
+        if (charts[id]) charts[id].destroy();
+        const isDark = document.body.classList.contains('dark-mode');
+        options.theme = { mode: isDark ? 'dark' : 'light' };
+        options.chart.fontFamily = 'Tajawal, sans-serif';
+        options.chart.background = 'transparent';
+        if (options.chart.type === 'donut' || options.chart.type === 'pie') {
+            options.tooltip = {
+                y: {
+                    formatter: function(val, opts) {
+                        const total = opts.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                        const percent = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                        const formatted = currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(val) : formatCurrency(val);
+                        return formatted + ` (${percent}%)`;
+                    }
+                }
+            };
+        }
+        charts[id] = new ApexCharts(document.querySelector("#" + id), options);
+        charts[id].render();
+    }
+
+    function renderCharts(data) {
+        const tree = data.tree;
+        const clubData = data.charts.club_distribution;
+        const trendData = data.charts.trend;
+
+        // Top KPIs
+        document.getElementById('kpi-total-bookings').textContent = new Intl.NumberFormat('ar-EG').format(tree.total_bookings);
+        document.getElementById('kpi-total-paid-revenue').textContent = formatCurrency(tree.total_paid_revenue);
+        document.getElementById('kpi-total-revenue-hint').textContent = currentViewMode === 'count' ? '' : `(الإجمالي شامل غير المؤكد: ${formatShortCurrency(tree.total_revenue)})`;
+        
+        // Titles for Payments
+        document.querySelector('#kpi-pay-visa').previousElementSibling.innerText = currentViewMode === 'count' ? 'عدد دفعات فيزا' : 'إيرادات فيزا';
+        document.querySelector('#kpi-pay-bank').previousElementSibling.innerText = currentViewMode === 'count' ? 'عدد التوريد البنكي' : 'إيرادات توريد بنكي';
+        document.querySelector('#kpi-pay-unpaid').previousElementSibling.innerText = currentViewMode === 'count' ? 'عدد لم يسدد' : 'إيرادات لم تسدد';
+
+        if (tree.payments) {
+            document.getElementById('kpi-pay-visa').textContent = currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(tree.payments.visa.c) : formatShortCurrency(tree.payments.visa.r);
+            document.getElementById('kpi-pay-bank').textContent = currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(tree.payments.bank.c) : formatShortCurrency(tree.payments.bank.r);
+            document.getElementById('kpi-pay-unpaid').textContent = currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(tree.payments.unpaid.c) : formatShortCurrency(tree.payments.unpaid.r);
+        }
+
+        if (clubData.length > 0) {
+            document.getElementById('kpi-top-club').textContent = clubData[0].unit__floor__building__club__name;
+        } else {
+            document.getElementById('kpi-top-club').textContent = "-";
+        }
+
+        // Toggle Data Selector
+        const key = currentViewMode === 'count' ? 'c' : 'r';
+        const formatLabel = (val) => currentViewMode === 'count' ? new Intl.NumberFormat('ar-EG').format(val) : formatShortCurrency(val);
+
+        // Titles
+        document.getElementById('chartTitleMain').innerText = currentViewMode === 'count' ? 'نسبة الحجوزات (عادي / قرعة / مخصصات)' : 'نسبة الإيرادات (عادي / قرعة / مخصصات)';
+        document.getElementById('clubChartTitle').innerText = currentViewMode === 'count' ? 'توزيع الحجوزات على الأندية' : 'توزيع الإيرادات على الأندية';
+
+        // 1. Club Chart
+        // Sort clubData based on currentViewMode
+        clubData.sort((a, b) => {
+            if (currentViewMode === 'count') {
+                return (b.count || 0) - (a.count || 0);
+            } else {
+                return (b.rev || 0) - (a.rev || 0);
+            }
+        });
+        
+        let clubSeriesData = currentViewMode === 'count' ? clubData.map(d => d.count || 0) : clubData.map(d => d.rev || 0);
+        
+        initChart('clubRevenueChart', {
+            chart: { type: 'bar', height: 350, animations: { enabled: true, easing: 'easeinout', speed: 800 } },
+            series: [{ name: currentViewMode === 'count' ? 'الحجوزات' : 'الإيراد', data: clubSeriesData }],
+            xaxis: { categories: clubData.map(d => d.unit__floor__building__club__name) },
+            colors: [currentViewMode === 'count' ? '#059669' : '#4f46e5'],
+            dataLabels: { enabled: false },
+            yaxis: { labels: { formatter: val => formatLabel(val) } },
+            plotOptions: { bar: { borderRadius: 4, horizontal: false } }
+        });
+
+        // 2. Booking Type (Donut)
+        initChart('bookingTypeChart', {
+            chart: { type: 'donut', height: 300, animations: { dynamicAnimation: { speed: 1000 } } },
+            series: [tree.standard.t[key], tree.armies.t[key], tree.lottery.t[key], tree.allocations.t[key]],
+            labels: ['حجز عادي (أيام)', 'جيوش ومناطق', 'قرعة', 'مخصصات'],
+            colors: ['#0284c7', '#10b981', '#d97706', '#4f46e5'],
+            dataLabels: { enabled: false }
+        });
+
+        // 3. Lottery Details (Donut)
+        initChart('lotteryChart', {
+            chart: { type: 'donut', height: 300 },
+            series: [tree.lottery.confirmed.t[key], tree.lottery.unconfirmed.t[key]],
+            labels: ['مؤكد', 'غير مؤكد'],
+            colors: ['#16a34a', '#dc2626'],
+            dataLabels: { enabled: false }
+        });
+
+        // 4. Army Regions (Bar)
+        const armies = tree.armies.list;
+        const armyLabels = Object.keys(armies);
+        const armyVals = Object.values(armies).map(n => n[key]);
+        
+        initChart('armyRegionChart', {
+            chart: { type: 'bar', height: 350 },
+            series: [{ name: currentViewMode === 'count' ? 'الحجوزات' : 'الإيراد', data: armyVals }],
+            xaxis: { categories: armyLabels },
+            colors: ['#059669'],
+            dataLabels: { enabled: true, formatter: val => formatLabel(val) },
+            yaxis: { labels: { formatter: val => formatLabel(val) } },
+            plotOptions: { bar: { borderRadius: 4 } }
+        });
+
+        // 5. Person Types (Horizontal Bar)
+        initChart('personTypeChart', {
+            chart: { type: 'bar', height: 300 },
+            series: [{ name: currentViewMode === 'count' ? 'الحجوزات' : 'الإيراد', data: [tree.global_pt.civ[key], tree.global_pt.mil[key], tree.global_pt.fam[key], tree.global_pt.mar[key], tree.global_pt.vet[key]] }],
+            xaxis: { categories: ['مدني عام', 'عسكري (جيوش)', 'عضوية عائلية', 'شهيد', 'محارب'], labels: { formatter: val => formatLabel(val) } },
+            colors: ['#ec4899'],
+            dataLabels: { enabled: true, formatter: val => formatLabel(val) },
+            yaxis: { labels: { formatter: val => val } },
+            plotOptions: { bar: { horizontal: true, borderRadius: 4 } }
+        });
+
+        // 6. Temporal Chart
+        const trendLabels = trendData.map(d => new Date(d.month).toLocaleDateString('ar-EG', {month: 'short', year: 'numeric'}));
+        const trendRev = trendData.map(d => d.rev || 0);
+        const trendCount = trendData.map(d => d.count || 0);
+
+        initChart('temporalTrendChart', {
+            chart: { type: 'line', height: 450 },
+            series: [
+                { name: 'الإيرادات', type: 'column', data: trendRev },
+                { name: 'عدد الحجوزات', type: 'line', data: trendCount }
+            ],
+            labels: trendLabels,
+            stroke: { width: [0, 4] },
+            colors: ['#0284c7', '#dc2626'],
+            yaxis: [
+                { title: { text: 'الإيرادات' }, labels: { formatter: val => formatShortCurrency(val) } },
+                { opposite: true, title: { text: 'عدد الحجوزات' } }
+            ]
+        });
+    }
+
+    function clearFilters() {
+        document.getElementById('year').value = 'all';
+        document.getElementById('month').value = 'all';
+        document.getElementById('start_date').value = '';
+        document.getElementById('end_date').value = '';
+        document.getElementById('club_id').value = 'all';
+        document.getElementById('classification_id').value = 'all';
+        document.getElementById('booking_type').value = 'all';
+        document.getElementById('person_type').value = 'all';
+        document.getElementById('period_id').value = 'all';
+        fetchData();
+    }
+
+    function fetchData() {
+        const params = new URLSearchParams({
+            start_date: document.getElementById('start_date').value,
+            end_date: document.getElementById('end_date').value,
+            year: document.getElementById('year').value,
+            month: document.getElementById('month').value,
+            club_id: document.getElementById('club_id').value,
+            classification_id: document.getElementById('classification_id').value,
+            booking_type: document.getElementById('booking_type').value,
+            person_type: document.getElementById('person_type').value,
+            period_id: document.getElementById('period_id').value,
+        });
+
+        treeContainer.innerHTML = '<div style="text-align:center; padding: 50px;"><i class="fas fa-spinner fa-spin fa-3x"></i><p>جاري تحميل البيانات...</p></div>';
+
+        fetch(`/api/dashboard/analytics-data/?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                currentData = data;
+                renderTree(data.tree);
+                renderCharts(data);
+            })
+            .catch(err => {
+                console.error(err);
+                treeContainer.innerHTML = '<div style="color:red; text-align:center;">حدث خطأ أثناء جلب البيانات.</div>';
+            });
+    }
+
+    document.querySelectorAll('.filters-section input, .filters-section select').forEach(el => {
+        el.addEventListener('change', fetchData);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchData();
+    });
+</script>
+{% endblock %}

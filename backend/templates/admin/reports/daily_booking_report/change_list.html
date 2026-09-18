@@ -1,0 +1,402 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Table Styling for Web View (Excel-like but polished) */
+    #changelist table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    #changelist table thead th {
+        background-color: #f8fafc;
+        color: #334155;
+        border: 1px solid #d1d5db;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+    }
+    #changelist table tbody td {
+        border: 1px solid #e2e8f0;
+        padding: 8px 10px;
+        text-align: center;
+        color: #334155;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+    #changelist table tbody tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    #changelist table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+    
+    /* Remove heavy styling from badges for a cleaner look in web */
+    #changelist table tbody td span {
+        border-radius: 4px !important;
+        font-size: 12px;
+        padding: 4px 8px !important;
+    }
+
+    /* Print Specific Styling */
+    @media print {
+        @page { size: landscape; margin: 1cm; }
+
+        /* Hide non-essential elements */
+        nav, .main-header, .main-sidebar, .main-footer, .content-header,
+        #changelist-filter, #custom-filters-container, #changelist-search,
+        .action-counter, .actions, .pagination, .object-tools,
+        #header, .breadcrumbs, .submit-row, .card-header,
+        #global-back-btn, .breadcrumb-item,
+        input[type="checkbox"] {
+            display: none !important;
+        }
+
+        /* Remove all overflow restrictions so content flows to multiple pages */
+        body, .wrapper, .content-wrapper, .content,
+        .container-fluid, .row, .col-12, .col-sm-12,
+        .card, .card-body, .table-responsive,
+        #changelist, #result_list {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .content-wrapper {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Black and white table for print */
+        #changelist table {
+            border: 1pt solid #000 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+        }
+        #changelist table thead th {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1pt solid #000 !important;
+        }
+        #changelist table tbody td {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1pt solid #000 !important;
+        }
+        #changelist table tbody tr {
+            background-color: #fff !important;
+            page-break-inside: avoid;
+        }
+        /* Strip colored badges completely for print */
+        #changelist table tbody td span, #changelist table tbody td a {
+            background: none !important;
+            color: #000 !important;
+            border: none !important;
+            padding: 0 !important;
+            text-decoration: none !important;
+        }
+        /* Add a title for the print view */
+        #changelist::before {
+            content: "تقرير حجوزات عن يوم (من: {{ selected_from }} إلى: {{ selected_to }})";
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block object-tools %}
+    <ul class="object-tools">
+        {{ block.super }}
+        <li>
+            <a href="#" onclick="window.print(); return false;" class="addlink" style="background-color: #2563eb; color: #ffffff !important; border-radius: 6px; padding: 6px 15px; border: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-block;">
+                <i class="fas fa-print" style="margin-left: 5px;"></i> طباعة التقرير
+            </a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block search %}
+    {{ block.super }}
+    <div id="custom-filters-container" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">من تاريخ الاضافة:</label>
+            <input type="date" name="from_date" id="custom_from_date" value="{{ selected_from }}" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">إلى تاريخ الاضافة:</label>
+            <input type="date" name="to_date" id="custom_to_date" value="{{ selected_to }}" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px; margin-right: auto;">
+            <label style="font-size: 13px; font-weight: bold; color: #475569; margin:0;">مصدر التسعير:</label>
+            <select id="price_source_toggle" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc;">
+                <option value="db">الداتابيز القديمة</option>
+                <option value="rules">قواعد التسعير</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var searchForm = document.getElementById("changelist-search");
+            var customFilters = document.getElementById("custom-filters-container");
+            if (searchForm && customFilters) {
+                // Move custom filters inside the search form, just after the search box
+                searchForm.appendChild(customFilters);
+                customFilters.style.background = "transparent";
+                customFilters.style.border = "none";
+                customFilters.style.padding = "0";
+                customFilters.style.margin = "10px 0 0 0";
+            }
+        });
+
+        // Clean up the ugly action counter text
+        document.addEventListener("DOMContentLoaded", function() {
+            var actionCounter = document.querySelector('.action-counter');
+            if (actionCounter) {
+                var totalCount = actionCounter.getAttribute('data-actions-icnt');
+                
+                // Hide original action counter so Django's actions.js doesn't mess with our text
+                actionCounter.style.display = 'none';
+                
+                // Hide the extra spans that show ugly text
+                var extraSpans = document.querySelectorAll('.action-counter ~ span.all, .action-counter ~ span.question, .action-counter ~ span.clear');
+                extraSpans.forEach(function(span) {
+                    span.style.display = 'none';
+                });
+                
+                // Create a clean, static total count span
+                if (totalCount) {
+                    var customCounter = document.createElement('span');
+                    customCounter.style.fontWeight = 'bold';
+                    customCounter.style.color = '#475569';
+                    customCounter.style.fontSize = '14px';
+                    customCounter.style.marginLeft = '15px';
+                    customCounter.innerHTML = 'إجمالي عدد الحجوزات للفترة المحددة: <span style="color:#e74c3c; font-size:16px;">{{ cl.result_count }}</span> حجز (الصفحة الحالية تعرض: ' + totalCount + ')';
+                    actionCounter.parentNode.insertBefore(customCounter, actionCounter);
+                }
+            }
+
+            // Price toggle logic
+            var priceToggle = document.getElementById('price_source_toggle');
+            if (priceToggle) {
+                priceToggle.addEventListener('change', function() {
+                    var source = this.value;
+                    var dbPrices = document.querySelectorAll('.price-db');
+                    var rulesPrices = document.querySelectorAll('.price-rules');
+                    
+                    if (source === 'db') {
+                        dbPrices.forEach(function(el) { el.style.display = 'inline'; });
+                        rulesPrices.forEach(function(el) { el.style.display = 'none'; });
+                    } else {
+                        dbPrices.forEach(function(el) { el.style.display = 'none'; });
+                        rulesPrices.forEach(function(el) { el.style.display = 'inline'; });
+                    }
+                    
+                    calculateTotalSum();
+                });
+            }
+
+            // Calculate Total Sum and append to table footer
+            function calculateTotalSum() {
+                var source = priceToggle ? priceToggle.value : 'db';
+                var selector = source === 'db' ? '.price-db' : '.price-rules';
+                var priceElements = document.querySelectorAll(selector);
+                
+                var totalSum = 0;
+                priceElements.forEach(function(el) {
+                    var val = parseFloat(el.getAttribute('data-val')) || 0;
+                    totalSum += val;
+                });
+
+                var table = document.querySelector('#result_list') || document.querySelector('#changelist table') || document.querySelector('table');
+                if (!table) return;
+
+                // Find price column index
+                var priceColHeader = table.querySelector('th.column-get_contract_price_display');
+                var allHeaders = Array.from(table.querySelectorAll('thead th'));
+                var colIndex = -1;
+
+                if (priceColHeader) {
+                    colIndex = allHeaders.indexOf(priceColHeader);
+                }
+
+                // Fallback: search by header text
+                if (colIndex === -1) {
+                    allHeaders.forEach(function(th, idx) {
+                        var txt = th.textContent.trim();
+                        if (txt === 'قيمة العقد' || txt.indexOf('قيمة') !== -1) {
+                            colIndex = idx;
+                        }
+                    });
+                }
+
+                // If still no price elements found, sum from the column cells directly
+                if (totalSum === 0 && colIndex > -1) {
+                    var rows = table.querySelectorAll('tbody tr');
+                    rows.forEach(function(row) {
+                        var tds = row.querySelectorAll('td');
+                        if (tds.length > colIndex) {
+                            var cellText = tds[colIndex].textContent.trim().replace(/[^\d.]/g, '');
+                            var val = parseFloat(cellText) || 0;
+                            totalSum += val;
+                        }
+                    });
+                }
+
+                if (colIndex === -1) return;
+
+                var tfoot = table.querySelector('tfoot');
+                if (!tfoot) {
+                    tfoot = document.createElement('tfoot');
+                    table.appendChild(tfoot);
+                }
+
+                var globalTotalDb = parseInt("{{ global_total_db|default:'0' }}") || 0;
+                var globalTotalRules = parseInt("{{ global_total_rules|default:'0' }}") || 0;
+                var globalTotal = source === 'db' ? globalTotalDb : globalTotalRules;
+                
+                var totalCols = allHeaders.length;
+                
+                // 1. Page Total -> goes to tfoot so it repeats on every printed page
+                tfoot.innerHTML = `
+                    <tr style="font-weight: bold; border-top: 3px solid #3b82f6;">
+                        <td colspan="${colIndex}" style="text-align: center; padding: 15px 20px; color: #000; font-size: 16px; letter-spacing: 1px; border: 2px solid #cbd5e1; background-color: #f8fafc !important;">
+                            <i class="fas fa-file-invoice-dollar" style="margin-left:8px; color:#3b82f6;"></i> إجمالي قيمة العقود (للصفحة الحالية فقط)
+                        </td>
+                        <td style="padding: 15px 20px; color: #000; font-size: 18px; text-align: center; border: 2px solid #cbd5e1; background-color: #fef08a !important;">
+                            ${totalSum.toLocaleString()} جنيه
+                        </td>
+                        <td colspan="${totalCols - colIndex - 1}" style="background-color: #f8fafc !important; border: 2px solid #cbd5e1;"></td>
+                    </tr>
+                `;
+
+                // 2. Global Total -> goes to the end of tbody so it only prints on the last page
+                var tbody = table.querySelector('tbody');
+                if (tbody) {
+                    // Remove any existing global total row to prevent duplicates if calculate is called again
+                    var existingGlobalRow = tbody.querySelector('.global-total-row');
+                    if (existingGlobalRow) existingGlobalRow.remove();
+
+                    var globalRow = document.createElement('tr');
+                    globalRow.className = 'global-total-row';
+                    globalRow.style.fontWeight = 'bold';
+                    globalRow.style.borderTop = '3px solid #22c55e';
+                    
+                    globalRow.innerHTML = `
+                        <td colspan="${colIndex}" style="text-align: center; padding: 18px 20px; color: #000; font-size: 18px; letter-spacing: 1px; border: 2px solid #cbd5e1; background-color: #f1f5f9 !important;">
+                            <i class="fas fa-globe" style="margin-left:8px; color:#22c55e;"></i> الإجمالي العام لجميع العقود (خلال الفترة المحددة بالكامل)
+                        </td>
+                        <td style="padding: 18px 20px; color: #000; font-size: 22px; text-align: center; border: 2px solid #cbd5e1; background-color: #bbf7d0 !important;">
+                            ${globalTotal.toLocaleString()} جنيه
+                        </td>
+                        <td colspan="${totalCols - colIndex - 1}" style="background-color: #f1f5f9 !important; border: 2px solid #cbd5e1;"></td>
+                    `;
+                    tbody.appendChild(globalRow);
+                }
+            }
+
+            // Highlight duplicate units
+            function highlightDuplicateUnits() {
+                var table = document.querySelector('#result_list') || document.querySelector('#changelist table') || document.querySelector('table');
+                if (!table) return;
+                
+                // 1. Find unit column index and club column index dynamically
+                var unitColIndex = -1;
+                var clubColIndex = -1;
+                var ths = table.querySelectorAll('thead th');
+                ths.forEach(function(th, index) {
+                    if (th.classList.contains('column-get_unit_only') || th.textContent.trim() === 'الوحدة') {
+                        unitColIndex = index;
+                    }
+                    if (th.classList.contains('column-get_club') || th.textContent.trim() === 'النادي') {
+                        clubColIndex = index;
+                    }
+                });
+                
+                var unitCells = [];
+                var rows = table.querySelectorAll('tbody tr');
+                
+                rows.forEach(function(row) {
+                    var unitTd = row.querySelector('td.field-get_unit_only');
+                    var clubTd = row.querySelector('td.field-get_club');
+                    
+                    var tds = row.querySelectorAll('td, th');
+                    
+                    if (!unitTd && unitColIndex !== -1 && tds.length > unitColIndex) {
+                        unitTd = tds[unitColIndex];
+                    }
+                    
+                    if (!clubTd && clubColIndex !== -1 && tds.length > clubColIndex) {
+                        clubTd = tds[clubColIndex];
+                    }
+                    
+                    if (unitTd) {
+                        unitCells.push({
+                            unitTd: unitTd,
+                            row: row,
+                            unitText: unitTd.textContent.trim(),
+                            clubText: clubTd ? clubTd.textContent.trim() : ""
+                        });
+                    }
+                });
+
+                if (unitCells.length === 0) return;
+
+                var unitCounts = {};
+                unitCells.forEach(function(cell) {
+                    var key = cell.clubText + "||" + cell.unitText;
+                    if (cell.unitText && cell.unitText !== "-" && cell.unitText !== "") {
+                        unitCounts[key] = (unitCounts[key] || 0) + 1;
+                    }
+                });
+
+                var duplicateKeys = Object.keys(unitCounts).filter(function(key) {
+                    return unitCounts[key] > 1;
+                });
+                
+                var colors = ['#fecaca', '#fef08a', '#bbf7d0', '#bfdbfe', '#e9d5ff', '#fed7aa', '#fbcfe8'];
+                var unitColorMap = {};
+                duplicateKeys.forEach(function(key, index) {
+                    unitColorMap[key] = colors[index % colors.length];
+                });
+
+                unitCells.forEach(function(cell) {
+                    var key = cell.clubText + "||" + cell.unitText;
+                    if (unitColorMap[key]) {
+                        var tr = cell.row;
+                        if (tr) {
+                            tr.style.setProperty('background-color', unitColorMap[key], 'important');
+                            
+                            var childTds = tr.querySelectorAll('td, th');
+                            childTds.forEach(function(childTd) {
+                                childTd.style.setProperty('background-color', unitColorMap[key], 'important');
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Initial calculation
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    calculateTotalSum();
+                    highlightDuplicateUnits();
+                }, 1500);
+            });
+        });
+    </script>
+{% endblock %}

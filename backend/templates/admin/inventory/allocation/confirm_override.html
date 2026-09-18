@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block content %}
+<div class="content-main">
+    <h1>تأكيد إنشاء الحجوزات وإلغاء التعارضات</h1>
+    <p>لقد اخترت إضافة المخصصات كحجوزات، ولكن تبين وجود تعارض مع الحجوزات/العقود التالية في نفس الفترة للوحدات المطلوبة:</p>
+    
+    <div style="margin: 20px 0; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 10px; text-align: right;">الوحدة</th>
+                    <th style="padding: 10px; text-align: right;">الحجز المتعارض (الحالي)</th>
+                    <th style="padding: 10px; text-align: right;">الفترة</th>
+                    <th style="padding: 10px; text-align: right;">المخصص الجديد المراد إحلاله</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conflict in conflicts %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">{{ conflict.unit }}</td>
+                    <td style="padding: 10px; color: #dc3545; font-weight: bold;">{{ conflict.old_guest }}</td>
+                    <td style="padding: 10px;">{{ conflict.period }}</td>
+                    <td style="padding: 10px; color: #198754; font-weight: bold;">{{ conflict.new_guest }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+        <strong>تحذير:</strong> هل أنت متأكد من رغبتك في <strong>حذف</strong> الحجوزات القديمة نهائياً وإنشاء الحجوزات الجديدة لهذه المخصصات؟
+    </div>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <div>
+            {% for obj in queryset %}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
+            {% endfor %}
+            <input type="hidden" name="action" value="create_booking_from_allocation">
+            <input type="hidden" name="confirm_override" value="yes">
+            
+            <a href="." class="button" style="background: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">إلغاء والرجوع</a>
+            <button type="submit" class="button" style="background: #dc3545; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 10px;">تأكيد الإلغاء والحفظ</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
