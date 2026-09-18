@@ -1,4 +1,4 @@
-﻿# Housing & Booking Management System (Migration & Modernization)
+# Housing & Booking Management System (Migration & Modernization)
 
 ## 📌 Project Overview
 Spearheaded the development and migration of a large-scale Housing and Booking Management System for military and civilian personnel. The project involved replacing a legacy Oracle-based database with a modern, robust Django web application, ensuring zero data loss during transition and synchronizing live operations between the two systems.

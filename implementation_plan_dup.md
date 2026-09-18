@@ -1,4 +1,4 @@
-﻿# Fix Duplicate Units and Prevent Overlapping Bookings
+# Fix Duplicate Units and Prevent Overlapping Bookings
 
 لقد قمت بفحص المشكلة بالكامل (الكارثة التي تحدثت عنها)، واكتشفت بالضبط ما حدث.
 
